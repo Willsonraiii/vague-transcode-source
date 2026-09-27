@@ -41,8 +41,8 @@ sites. **Do not re-derive these from first principles — they were verified.**
 | Fact | Evidence |
 |---|---|
 | TikTok re-encodes **every** upload. No exceptions. | Universal across sources |
-| **TikTok ACCEPTS 4K 60 fps uploads, and 120 fps content is served on-platform** | Owner-verified, Sept 2026 |
-| Delivery **measured** at ~1080p, 2–2.5 Mbps (our reference video) | Whether an account is *served* above 1080p is unmeasured — acceptance ≠ delivery; check with the compare tool |
+| **TikTok ACCEPTS 4K 60 fps uploads; 120 fps content is served on-platform** | Owner-verified, Sept 2026 |
+| **TikTok DELIVERS 4K 60 HDR** — a 4K60 Dolby Vision upload, downloaded back with a third-party downloader, reads **HDR 4K 60** in the gallery | **First delivered-upload measurement ever** (owner, Sept 2026). The old "~1080p at 2–2.5 Mbps ceiling" — blogs + one old reference video — did not hold for this account. Delivered bitrate: not yet measured |
 | **TikTok DOES support HDR playback** | It shipped a "Standard Video Playback" accessibility toggle in Sept 2025 so viewers can *dim* HDR; colorists report TikTok accepts PQ where Instagram does not |
 | HDR renders on the **mobile app only** | Desktop web player never shows HDR |
 | 60 fps is accepted; delivered to selected accounts | |
@@ -128,6 +128,11 @@ with a note.
 This also proves the patch genuinely changes TikTok's behaviour — it is not
 placebo. It is simply incompatible with HDR.
 
+**Reproduced Sept 2026** with a 4K60 Dolby Vision upload: the post's
+third-party download reads **HDR 4K 60** in the gallery, while the app shows
+no Dolby/HDR badge — same signature: the data survives, the player doesn't
+badge it.
+
 **Method note worth copying:** the owner distinguished "did the data survive"
 from "does the player render it" by downloading the post back. Those look
 identical from inside the app. Always check the delivered file, not the screen.
@@ -173,28 +178,26 @@ Detection heuristic implemented in `hdr-doctor.js`: a 4K file that is 8-bit
 H.264 SDR is almost certainly transfer-damaged, because phones record 4K as
 HEVC 10-bit.
 
-### 2.6 The 4K question — **UPDATED: 4K is accepted**
+### 2.6 4K — accepted AND delivered ⭐ (measured)
 
-**TikTok accepts 4K 60 fps uploads** (owner-verified Sept 2026), and 120 fps
-content is served on-platform. The engine and all surfaces now treat 4K and
-120 fps as first-class: no warnings, no forced downscale, 4K HDR preserved.
+**Measured Sept 2026 (owner):** a 4K 60 Dolby Vision upload came back from
+TikTok as **4K 60 HDR** — the downloaded post reads "HDR 4K 60" in the
+gallery, and 4K + 60 fps are visible in-app. The delivery ladder served 4K60
+to this account. The old "TikTok delivers ~1080p at 2–2.5 Mbps" ceiling —
+inherited from blog posts and one old reference video — did not hold.
 
-What remains genuinely unknown: whether *your* account is **served** above
-1080p. The ~1080p / 2–2.5 Mbps delivery figure was measured on one reference
-video. Acceptance and delivery are different things — measure yours by posting
-and downloading the post back ("Did it survive?" on the site).
+Still open (both answered by one drop into "Did it survive?"): the delivered
+**bitrate**, and whether the delivered file keeps the Dolby Vision RPU or is
+re-tagged as plain HLG/PQ.
 
-The old advice ("shoot 1080p, not 4K") was based on two things:
-
-1. *TikTok's downscaler is bad* — came from blog posts, **never measured**
-   (still open, §8.3).
-2. The CLI's 4K→1080p transcode took **17 minutes** on the owner's 2-core
-   laptop — now optional (`--1080p`), since 4K uploads are accepted as-is.
-
-**Recommendation stands as the measured-safe default** — shoot/export 1080p60
-HDR and the whole job is a ~1 second lossless remux — but the tool no longer
-nags when you bring a 4K60 or 120 fps file. If you post one, measure the
-delivery; that single result updates this section again.
+Consequences:
+- The engine accepts and preserves 4K60/120 on every surface (no forced
+  downscale, no fps decimation).
+- **"Shoot 1080p, not 4K" is retired.** Exporting 4K60 HDR is a
+  measured-deliverable option, and the lossless remux handles a 4K file just
+  as fast (~1 s — no re-encode happens either way). 1080p60 HDR remains fine
+  and keeps files small; both deliver.
+- `--1080p` (CLI) survives only as an A/B curiosity.
 
 ### 2.7 Hardware limits on the owner's laptop
 
@@ -387,8 +390,8 @@ Pattern: I reasoned from how systems *should* work. The owner tested how this on
 ## 7. The recipe (current best known method)
 
 ```
-1. Shoot/export 1080p60 HDR (measured-safe default) — 4K60 and 120 fps are
-   accepted by TikTok too; delivery above 1080p is unverified for our account
+1. Shoot/export 4K60 HDR or 1080p60 HDR — 4K60 delivery MEASURED on our
+   account (Sept 2026: 4K60 DV upload → delivered back as 4K 60 HDR)
 2. Transfer to PC losslessly (iPhone: "Keep Originals" + USB)
 3. HDR file:  ./vague.sh clip.mp4 --remux-only        (keep DV, no patch)
    SDR file:  ./vague.sh clip.mp4 --remux-only --patch   (patch optional)
@@ -416,10 +419,11 @@ https://willsonraiii.github.io/vague-transcode/
 
 Remaining:
 
-1. ✅ **PARTLY DONE** — the owner posted a patched HDR file, downloaded it back,
-   and found the HDR intact in the file but not rendered in the app. See §2.3b.
-   Still unmeasured: an **unpatched** HDR upload. Does it render as HDR in the
-   app? That is now the single most useful test.
+1. ✅ **FIRST DELIVERY MEASUREMENT DONE (Sept 2026)** — a 4K60 Dolby Vision
+   upload came back from TikTok as **4K 60 HDR** (§2.6). Nice-to-dos: run that
+   downloaded file through "Did it survive?" to record delivered bitrate and
+   exact HDR tags; and post an **unpatched** HDR clip once, to see whether the
+   app renders/badges HDR when the duration header is normal.
 
 2. **Does stripping Dolby Vision break HDR?** It was briefly ON by default and
    HDR stopped surviving. Now OFF everywhere. Two uploads — one with, one
@@ -427,11 +431,10 @@ Remaining:
    misreading: the "HDR" tag on other people's videos describes what TikTok
    *delivers*, not what they *uploaded*.
 
-3. **"TikTok's 4K downscaler is bad" is unverified.** It came from blog posts and
-   was repeated by the previous assistant. 4K uploads are now *accepted*
-   (owner-verified, engine updated), so the experiment got simpler: post the
-   same clip once as 4K and once as `--1080p`-downscaled, download both back,
-   compare. If the 4K one is served no worse, the transcode path is dead.
+3. ~~"TikTok's 4K downscaler is bad"~~ — **moot**: TikTok delivered our 4K60
+   upload as 4K (§2.6); there is no forced 1080p downscale on this account.
+   `--1080p` remains an A/B curiosity only. The delivered 4K bitrate is still
+   unmeasured.
 
 4. **Unexplored levers:** `btrt` declared bitrate, keyframe/`stss` density,
    resolution bucket edges, uploading AV1. A variant generator (one field changed
@@ -474,7 +477,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 17 | Installed real Chromium and wrote genuine end-to-end tests. Found two bugs — **both in the tests, not the product**. |
 | 18 | **Owner verified TikTok accepts 4K 60 fps (and has seen 120 fps served)** → engine limits raised (2160×3840, 120 fps, 4K HDR), all surfaces stop warning about 4K, CLI keeps 4K by default with `--1080p` as the optional downscale. Acceptance ≠ delivery: whether our account is *served* >1080p is still unmeasured. |
 | 19 | **Owner: the app has no Files picker (gallery only), and the site "downloads quickly without working/patching".** Byte-verification proved the patch DOES apply (`mvhd`=1 in the output) — the gallery route strips it after upload. Site rebuilt: new step-4 "Verified" card re-probes the output file and shows a before→after table (moov position, duration header, DV, edit list, branding, byte-identity); all upload guidance now matches gallery-only reality (share-sheet route + verify with compare tool). |
-
+| 20 | **FIRST DELIVERY MEASUREMENT**: owner uploaded 4K60 Dolby Vision (patched) — app shows 4K 60 but no Dolby badge; the third-party download of the post reads **HDR 4K 60** in the gallery. TikTok delivers 4K60 HDR → §2.1/§2.6/§7/§8 updated, "shoot 1080p" advice retired, §2.3b signature reproduced. |
 ---
 
 ## 9. Standing preferences

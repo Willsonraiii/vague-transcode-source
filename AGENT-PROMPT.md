@@ -43,7 +43,7 @@ testing. For example:
 | Model will likely say | Reality here |
 |---|---|
 | "TikTok doesn't support HDR" | It does — app only |
-| "TikTok caps uploads at 1080p/60" | It accepts 4K and 120 fps (owner-verified Sept 2026). Delivery above 1080p is unmeasured — acceptance ≠ delivery |
+| "TikTok caps uploads/delivery at 1080p/60" | It accepts 4K and 120 fps, and DELIVERED a 4K60 HDR upload back as 4K 60 HDR (measured Sept 2026) |
 | "There's no way around platform compression" | The duration patch is real and is what paid tools sell |
 | "Keep Dolby Vision, more metadata is better" | Unresolved — it may be breaking HDR. See §8 |
 | "Use ffmpeg.wasm to transcode in the browser" | Canvas is SDR-only; it destroys HDR |

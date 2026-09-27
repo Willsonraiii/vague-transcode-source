@@ -51,12 +51,12 @@ against what they served.
 
 ## The honest part
 
-**Every platform re-encodes every upload.** TikTok *accepts* up to 4K and
-120 fps — then serves viewers what its delivery ladder decides; on our
-reference that measured ~1080p at 2–2.5 Mbps. No tool prevents the re-encode —
-anything claiming "no compression" is describing the file it hands back, not
-what viewers receive. What *your* account is served is measurable: post,
-download the post back, and use the compare tool.
+**Every platform re-encodes every upload** — but the ceiling is higher than
+the blogs say: measured on our account (Sept 2026), TikTok delivered a 4K60
+HDR upload back as **4K 60 HDR**. No tool prevents the re-encode; anything
+claiming "no compression" is describing the file it hands back, not what
+viewers receive. Verify your own delivery: post, download the post back, use
+the compare tool.
 
 What you can control is the quality of the source their encoder works from, and
 whether your frame rate and colour survive the trip.
@@ -127,8 +127,8 @@ sudo apt install -y xvfb libnspr4 libnss3 libasound2t64 libatk1.0-0t64 \
 ## Current best method
 
 ```
-1. Shoot / export 1080p60 HDR (measured-safe default) — 4K60 and 120 fps are
-   accepted by TikTok too; delivery above 1080p is unverified for our account
+1. Shoot / export 4K60 or 1080p60 HDR — 4K60 delivery measured on our account
+   (Sept 2026: 4K60 DV upload came back as 4K 60 HDR)
 2. Transfer to PC losslessly  (iPhone: Settings → Photos → Keep Originals, then USB)
 3. Fix the container  (website, extension, or ./vague.sh --remux-only)
 4. Move back to the phone losslessly
