@@ -242,9 +242,14 @@
       ${probe.fps} fps frame count survives (the ut0ku/Zilem-style timescale patch). Lossless,
       keeps real duration (no 00:00) and HDR. Local players may report the halved rate — expected.</span></label>`);
     if (!parseFailed && probe?.hasDolbyVisionRPU) btns.push(`<label class="vg-opt" style="background:#eaf6ff">
-      <input type="checkbox" id="vg-nodv"> <b>Strip Dolby Vision</b> (off — testing only)
-      <span>⚠ Leave OFF. HDR stopped surviving upload while this was on — TikTok may need the
-      Dolby Vision box to treat the file as HDR at all.</span></label>`);
+      <input type="checkbox" id="vg-nodv" checked> <b>Deliver as plain HLG</b> (recommended)
+      <span>Measured: every HDR file TikTok delivers is plain HLG — their encoder strips Dolby
+      Vision itself. Matching their output format is lossless and removes the last difference
+      from a creator-grade upload.</span></label>`);
+    if (!parseFailed) btns.push(`<label class="vg-opt" style="background:#eef9ef">
+      <input type="checkbox" id="vg-isom" checked> <b>Match TikTok's signature</b> (recommended)
+      <span>Brand isom + video timescale 19200 — the exact container signature their muxer
+      writes on delivered files. Timing, fps and duration unchanged.</span></label>`);
     if (!parseFailed) btns.push(`<label class="vg-opt" style="background:#fff3d6">
       <input type="checkbox" id="vg-zero"> <b>Duration patch</b> <b>(likely broken — Sept 2026 TikTok update)</b>
       <span>⚠ Owner-tested after the update: the app's post screen shows no duration and the post
@@ -288,7 +293,8 @@
       const r = await faststartRemux(held.file,
         (pct, label) => { btn.textContent = `${label}… ${pct}%`; },
         { zeroDuration: zero, rebrand: true, stripEdits: true,
-          stripDV: !!panel.querySelector('#vg-nodv')?.checked, fpsGuard: div });
+          stripDV: !!panel.querySelector('#vg-nodv')?.checked, fpsGuard: div,
+          isoSignature: !!panel.querySelector('#vg-isom')?.checked });
       const name = held.file.name.replace(/\.[^.]+$/, '') + (zero ? '-patched.mp4' : '-faststart.mp4');
       release(r.blob, name);
       finish(btn, `✓ Lossless — ${(r.blob.size / 1048576).toFixed(1)} MB sent`);
@@ -302,6 +308,8 @@
       if (r.durationZeroed) bits.push('duration patched');
       if (r.fpsGuarded && (r.fpsGuarded.mvhd || r.fpsGuarded.mdhd))
         bits.push(`frame-rate method ÷${r.fpsGuarded.divider} — ${Math.round(analysis.probe.fps / r.fpsGuarded.divider)} fps declared, ${analysis.probe.fps} fps samples intact`);
+      if (r.isoSigned && r.isoSigned.tracks) bits.push(`signature isom · ts 19200 (×${r.isoSigned.factor})`);
+      if (r.dvStripped && r.dvStripped.boxes) bits.push('plain HLG');
       v.textContent = `★ ${bits.join(' · ')}. ${analysis.probe.hdrFormat === 'dolbyvision' ? 'Dolby Vision' : 'Quality'} fully preserved.`;
     } catch (err) {
       btn.disabled = false; btn.textContent = orig;

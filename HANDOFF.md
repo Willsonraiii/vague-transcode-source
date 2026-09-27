@@ -55,10 +55,15 @@ sites. **Do not re-derive these from first principles — they were verified.**
 | **Studio "Only me" → flip to Everyone in the app**: community-verified to keep **60 fps · 1080p · HDR · HEVC** | Reported by multiple sites/creators (owner relayed, Sept 2026). Mechanism: desktop = file route (no gallery re-encode) + the app-side visibility flip publishes through the app pipeline. Not yet tested by us |
 | Max upload: 287.6 MB mobile / **4 GB desktop web** | |
 
-### 2.2 The Dolby Vision finding ⭐ → **REVERSED**
+### 2.2 The Dolby Vision finding ⭐ → **REVERSED TWICE — settled by measurement**
 
-**Deliver as Dolby Vision, not plain HDR.** (This section originally claimed the
-opposite. The reversal is real and tested — see below.)
+**Deliver as plain HLG. Default flipped back ON (28 Sept 2026).** The earlier
+"keep DV" reversal was based on a confounded A/B test. The decisive evidence is
+stronger: **every HDR file TikTok itself delivers is plain HLG** — their encoder
+strips Dolby Vision (measured on two delivered posts: @pokanepridumal 1080p60
+hevc 10-bit bt2020/HLG, DV gone; Nova example post, same). A DV-marked upload is
+something their pipeline never produces; matching their output is the play.
+`--keep-dv` on the CLI keeps the old behaviour.
 
 The original reasoning: DV **profile 8.4 is an HLG base layer plus an RPU**.
 All the HDR lives in the base layer; the RPU only adds dynamic metadata — so
@@ -434,9 +439,9 @@ cli/
 
 test/
   run-all.sh         runs everything
-  *-test.mjs         6 unit suites
-  e2e-site.mjs       36 checks in real Chromium
-  e2e-extension.mjs  21 checks, extension loaded for real
+  *-test.mjs         8 unit suites (125 assertions)
+  e2e-site.mjs       59 checks in real Chromium
+  e2e-extension.mjs  25 checks, extension loaded for real
   *.mp4              synthetic fixtures
 
 nova-server/         server pipeline spec — NOT NEEDED for personal use, ignore
@@ -736,6 +741,7 @@ file-side work will change it.
 | 28 | **00:00 patch is dead on both routes after the TikTok update** (owner screenshot: post screen, `-patched.mp4`, no duration, can't publish). Studio already refused; now the app blocks posting. All surfaces relabel the patch "likely broken — Sept 2026 update"; frame-rate method unaffected (real duration). Matches vague-infinity's "NOVA updated" scramble. |  the CLI)
 | 29 | **A/B test kit built** (site `#abkit` + CLI `--kit`): writes -A-method / -B-plainHDR / -C-untouched variants for HDR sources — the instrument that finds this account's HDR recipe in one posting session. Motivation: every prior HDR belief was confounded by the gallery route (incl. the strip-DV revert — same confound as §2.3b). Website 56/56. |- Prefers being shown the command to run over long explanations
 | 30 | **A/B/C null result**: no variant (method / plain-HLG / untouched) delivered visible HDR. Tool + method + DV-vs-HLG all exonerated. Remaining: source validity, route (share sheet untested), account gating (HQ-uploads setting). Next: share-sheet test with a confirmed-HDR source. |
+| 31 | **Signature matching shipped** (28 Sept): measured delivered-file fingerprints (brand `isom`, video ts=19200, plain HLG) now applied by default on site/CLI/extension. Engine: `isoTimescale` exact-integer rescale (×32 for iPhone ts=600), non-integral skipped safely, byte-identical. Order note: iso runs BEFORE fpsGuard by design (guard-then-iso would rescale deltas and undo the declared-fps trick) — unguarded files land exactly 19200, method files 19200/div. Tests: signature suite 15 new, rebrand expectations isom. Next: one Studio post with the full recipe, measure feed rendition. |
 - Will push back hard on anything that doesn't work; take it seriously and test
   rather than explain
 - **Changes machines constantly.** GitHub is the single source of truth — never

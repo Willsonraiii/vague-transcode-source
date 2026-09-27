@@ -89,7 +89,10 @@ const ptext = await panel.innerText().catch(() => '');
 chk('panel shows held state', /upload held/i.test(ptext));
 chk('panel probed the file', /1080|60/.test(ptext));
 chk('detected Dolby Vision', /dolby vision/i.test(ptext));
-chk('offers plain-HDR option', await page.locator('#vg-nodv').count() > 0);
+chk('plain-HDR option pre-ticked (measured default)', (await page.locator('#vg-nodv').count()) > 0 &&
+    (await page.locator('#vg-nodv').isChecked()));
+chk('signature option pre-ticked', (await page.locator('#vg-isom').count()) > 0 &&
+    (await page.locator('#vg-isom').isChecked()));
 chk('duration patch offered for HDR (experimental)', (await page.locator('#vg-zero').count()) > 0);
 chk('60/120fps method offered + pre-ticked', (await page.locator('#vg-method').count()) > 0 &&
     (await page.locator('#vg-method').isChecked()));

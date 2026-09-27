@@ -20,7 +20,7 @@ console.log(`AFTER   brand=${after.toString('latin1',8,12)}  edts=${after.includ
 console.log(`\n${r.note}\n`);
 
 chk('moov moved to front',              r.moved===true);
-chk('QuickTime rebranded to mp42',      after.toString('latin1',8,12)==='mp42');
+chk('QuickTime rebranded to isom (TikTok muxer brand)', after.toString('latin1',8,12)==='isom');
 chk('no "qt  " brand left in ftyp',     !after.subarray(0,32).includes(Buffer.from('qt  ')));
 chk('edit list neutralised',            !after.includes(Buffer.from('edts')));
 chk('edts became free padding',         after.includes(Buffer.from('free')));

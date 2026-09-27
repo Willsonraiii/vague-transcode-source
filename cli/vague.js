@@ -28,7 +28,7 @@
  *   --patch-aggressive  also zero track + media headers (BREAKS TikTok uploads)
  *   --force-patch       (compatibility) accepted, no longer needed — --patch runs
  *                       on HDR with an experimental warning (§2.3b is confounded)
- *   --kit               A/B test kit: write -A-method / -B-plainHDR / -C-untouched
+ *   --kit               A/B test kit: write -A-recipe / -B-keepDV / -C-untouched
  *                       variants of the input (post them all the same way,
  *                       then compare what TikTok delivered)
  *   --method            the 60/120fps method: divide mvhd+mdhd timescale by 2
@@ -42,8 +42,8 @@
  *   --fast              CPU preset "faster" instead of "medium"
  *   --preset <name>     explicit x265 preset
  *   --verbose           show full ffmpeg output (default: quiet)
- *   --no-dv             strip Dolby Vision, leave plain HLG.  TESTING ONLY —
- *                       HDR stopped surviving upload with this on.
+ *   --keep-dv           keep Dolby Vision signalling (default is now PLAIN HLG —
+ *                       measured: TikTok's own deliveries are always plain HLG)
  *   --upload            send the result to your TikTok drafts (official API)
  *   --tiktok-login      authorise once, then --upload works
  *   --dry-run           print the commands, run nothing
@@ -369,10 +369,10 @@ async function probeSource(file, tools) {
       const dir = path.dirname(outPath), stem = path.basename(outPath, path.extname(outPath));
       const div = src.fps > 90 ? 4 : src.fps > 48 ? 2 : 0;
       const variants = [
-        { sfx: 'A-method', opts: { rebrand: true, stripEdits: true, fpsGuard: div } },
+        { sfx: 'A-recipe', opts: { rebrand: true, stripEdits: true, fpsGuard: div, isoSignature: true, stripDV: src.hasDolbyVisionRPU } },
       ];
       if (src.hasDolbyVisionRPU)
-        variants.push({ sfx: 'B-plainHDR', opts: { rebrand: true, stripEdits: true, fpsGuard: div, stripDV: true } });
+        variants.push({ sfx: 'B-keepDV', opts: { rebrand: true, stripEdits: true, fpsGuard: div, isoSignature: true, stripDV: false } });
       variants.push({ sfx: 'C-untouched', opts: {} });
       head('A/B test kit');
       for (const v of variants) {
@@ -382,7 +382,7 @@ async function probeSource(file, tools) {
         say(`  ${C.g}✓${C.x} ${p2}`);
       }
       say(`\n  ${C.b}Post all of them the SAME way (Studio "Only me" -> flip in the app), wait 30 min,${C.x}`);
-      say(`  ${C.b}then download each back and compare. A HDR = done · B-only = use --no-dv · C-only = bug · none = route/format.${C.x}`);
+      say(`  ${C.b}then download each back and compare. A HDR = done · B-only = keep DV · C-only = bug · none = route/format.${C.x}`);
       return;
     }
     const buf = fs.readFileSync(input);
@@ -413,7 +413,8 @@ async function probeSource(file, tools) {
       if (pct !== last) { process.stderr.write(`\r  ${label}… ${pct}%   `); last = pct; }
     }, { zeroDuration: PATCH ? (PATCH_AGG ? 'aggressive' : true) : false,
          rebrand: true, stripEdits: true, stripDV: NO_DV,
-         fpsGuard: METHOD && src.fps > 48 ? (src.fps > 90 ? 4 : 2) : 0 });
+         fpsGuard: METHOD && src.fps > 48 ? (src.fps > 90 ? 4 : 2) : 0,
+         isoSignature: true });
     if (PATCH) {
       say(`\n  ${C.y}${C.B}⚠ PATCHED FILE — one valid upload route only:${C.x}`);
       say(`  ${C.y}   1. move it to your phone losslessly (USB / Telegram as File / http.server)`);

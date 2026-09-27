@@ -56,7 +56,8 @@ chk('shows resolution 1080×1920', text.includes('1080×1920'));
 chk('shows 60 fps', /60\s*fps/.test(text));
 chk('detects Dolby Vision', text.includes('Dolby Vision'));
 chk('offers the plain-HDR option', await page.locator('#nodv').count() > 0);
-chk('plain-HDR is OFF by default (reverted — HANDOFF §8.2)', !(await page.locator('#nodv').isChecked()));
+chk('plain-HDR is ON by default (measured: TikTok delivers plain HLG)', await page.locator('#nodv').isChecked());
+chk('signature match offered + pre-ticked', (await page.locator('#isom').count()) > 0 && (await page.locator('#isom').isChecked()));
 chk('duration patch offered for HDR (experimental)', await page.locator('#patch').isEnabled());
 chk('HDR patch warns about the §2.3b confound', /experimental on HDR/i.test(text) && /gallery/i.test(await page.locator('#patch').locator('..').innerText()));
 chk('patch label carries the Sept 2026 post-block warning', /fail to post|cannot be published/i.test(text));
@@ -87,6 +88,7 @@ if (out) {
   chk('dvcC removed from output', !out.includes(Buffer.from('dvcC')));
   chk('free padding present', out.includes(Buffer.from('free')));
   chk('still HEVC', out.includes(Buffer.from('hvc1')));
+  chk('output brand is isom (TikTok muxer brand)', out.slice(8,12).toString() === 'isom', `  ${out.slice(8,12).toString()}`);
   const after = await page.locator('#results').innerText();
   chk('UI reports what it did', /Dolby Vision signalling removed|plain HDR/i.test(after));
   // the verify card is built async (re-probe of the output) — wait for it
@@ -96,6 +98,7 @@ if (out) {
   chk('verification proves byte-identity', /byte-identical/.test(vtxt));
   chk('verification shows moov moved', /moov at front/.test(vtxt));
   chk('verification shows DV removed', /plain HLG HDR/.test(vtxt));
+  chk('verification shows signature row', /timescale/.test(vtxt));
   chk('verification shows method applied (declared 30 fps)', /declares 30 fps \(method ÷2\)/.test(vtxt));
   chk('output declared 30 fps — samples intact', /method ÷2/.test(vtxt));
   // the verify card is built async; wait for the checklist that follows it
@@ -116,8 +119,8 @@ for (let i = 0; i < 3; i++) {
   kitNames.push(d.suggestedFilename());
 }
 chk('kit builds 3 files', kitNames.length === 3, `  ${kitNames.join(' · ')}`);
-chk('A = method variant', /A-method\.mp4$/.test(kitNames[0] || ''));
-chk('B = plainHDR variant present', kitNames.some(n => /B-plainHDR/.test(n)));
+chk('A = full-recipe variant', /A-recipe\.mp4$/.test(kitNames[0] || ''));
+chk('B = keepDV variant present', kitNames.some(n => /B-keepDV/.test(n)));
 chk('C = untouched control present', kitNames.some(n => /C-untouched/.test(n)));
 chk('kit decoder rendered', /B shows HDR, A doesn/.test(await page.evaluate(() => document.body.textContent)));
 
