@@ -292,6 +292,14 @@ re-encode capability (downscale, CFR lock), which our CLI does locally.
 Their example post ("latest method"): https://vt.tiktok.com/ZSbdQVqav/ —
 download it back and run the compare tool before treating it as the bar.
 
+**Forge confirmed server-side (owner screenshot, Sept 2026):** their UI shows
+the user's video uploading to their server (44 MB at ~316 KB/s) behind a
+Cloudflare gate + WhatsApp funnel — the exact privacy/speed cost our local
+engine avoids. Notably their analyzer labelled an iPhone 4K60 H.265 file
+(IMG_6334.mov) **SDR** — either a weak probe (ours reads DV 8.4/HLG/PQ) or an
+SDR recording. Lesson for the goal: if the source probe says SDR, no tool can
+deliver HDR — check the source with our probe first.
+
 ### 2.9 The frame-rate method (timescale patch) ⭐⭐ — IMPLEMENTED 27 Sept 2026
 
 **This is the core of what the paid "methods" actually do**, found in the open:
