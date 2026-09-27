@@ -566,6 +566,30 @@ A-HDR = done · B-only = plain HLG required (engine default flips) · C-only =
 our remux hurts (bug hunt) · none = route/source-format variables. This is
 §8.4's variant generator, focused on the goal.
 
+**THE DECISIVE MEASUREMENT (27 Sept 2026, agent-probed three posts).**
+
+| Delivered | OWNER (@golomcqymaa, NP) | Creator 1 (KZ) | Creator 2 (KZ) |
+|---|---|---|---|
+| resolution | **720×1280** | 1080×1920 | 1080×1920 |
+| fps | **30** | 60 | 60 |
+| codec | **h264 8-bit** | **hevc 10-bit** | hevc 8-bit |
+| colour | **bt709 SDR** | **bt2020/HLG HDR** | bt709 SDR |
+| bitrate | **2.9 Mbps** | 16.1 | 6.9 |
+
+**TikTok served the owner's post from the BOTTOM rung of the ladder** —
+720p30 SDR h264 @2.9 Mbps. That is a delivery-tier/account-setting outcome,
+not a file outcome (the file was confirmed HDR; even the untouched original
+failed). 720p/30/2.9 is the classic "low-quality uploads" signature.
+Note: creator 2's "HDR" post also delivers SDR — the HDR ladder (10-bit HLG
+16 Mbps) is account-dependent even among creators. The owner's post title
+confirms it was a `-patched` file that DID post (pre-update or per-route).
+
+**NEXT (single highest-value action): owner checks Settings → Content
+preferences → "Allow high-quality uploads" — if OFF, that alone explains
+every null result tonight. Then ONE normal post; agent re-measures the
+delivery. If still 720p30 with the setting ON → deeper account/region
+gating (NP vs KZ cohorts) — file-side work is complete and correct.**
+
 **A/B/C RESULT (owner, 27 Sept 2026): NO variant showed visible HDR.**
 A (method, DV kept) ✗ · B (method, plain HLG) ✗ · C (untouched original) ✗.
 Eliminations: our remux exonerated (C failed too) · the method exonerated ·
