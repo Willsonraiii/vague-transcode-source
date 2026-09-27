@@ -41,10 +41,12 @@ sites. **Do not re-derive these from first principles — they were verified.**
 | Fact | Evidence |
 |---|---|
 | TikTok re-encodes **every** upload. No exceptions. | Universal across sources |
-| Delivery ceiling is **1080p at ~2–2.5 Mbps** | Multiple sources + a reference video |
+| **TikTok ACCEPTS 4K 60 fps uploads, and 120 fps content is served on-platform** | Owner-verified, Sept 2026 |
+| Delivery **measured** at ~1080p, 2–2.5 Mbps (our reference video) | Whether an account is *served* above 1080p is unmeasured — acceptance ≠ delivery; check with the compare tool |
 | **TikTok DOES support HDR playback** | It shipped a "Standard Video Playback" accessibility toggle in Sept 2025 so viewers can *dim* HDR; colorists report TikTok accepts PQ where Instagram does not |
 | HDR renders on the **mobile app only** | Desktop web player never shows HDR |
 | 60 fps is accepted; delivered to selected accounts | |
+| **120 fps is accepted** (owner has seen 120 served on-platform) | Sept 2026 |
 | "Allow high-quality uploads" is an **account setting** that applies to desktop uploads too | Profile → Menu → Settings and privacy → Content preferences |
 | Without that toggle, TikTok can deliver 30 fps even from a 60 fps source | |
 | **H.265 is re-encoded lossily by TikTok**; H.264 is the safer SDR codec | |
@@ -156,21 +158,28 @@ Detection heuristic implemented in `hdr-doctor.js`: a 4K file that is 8-bit
 H.264 SDR is almost certainly transfer-damaged, because phones record 4K as
 HEVC 10-bit.
 
-### 2.6 The 4K trap
+### 2.6 The 4K question — **UPDATED: 4K is accepted**
 
-TikTok delivers 1080p. Shooting/exporting 4K means someone downscales:
+**TikTok accepts 4K 60 fps uploads** (owner-verified Sept 2026), and 120 fps
+content is served on-platform. The engine and all surfaces now treat 4K and
+120 fps as first-class: no warnings, no forced downscale, 4K HDR preserved.
 
-| Who | Cost |
-|---|---|
-| TikTok's server | fast, low-quality filter |
-| The CLI | good Lanczos — but **17 minutes** on the owner's 2-core laptop |
-| **The editor, on export** | good filter, free — the render was happening anyway |
+What remains genuinely unknown: whether *your* account is **served** above
+1080p. The ~1080p / 2–2.5 Mbps delivery figure was measured on one reference
+video. Acceptance and delivery are different things — measure yours by posting
+and downloading the post back ("Did it survive?" on the site).
 
-**Recommendation: shoot/export 1080p60 HDR.** Then the whole job is a ~1 second
-lossless remux. A reference video the owner admired was delivered at 1080p.
+The old advice ("shoot 1080p, not 4K") was based on two things:
 
-⚠️ Note: "TikTok's downscaler is bad" came from blog posts and has **never been
-measured**. If someone wants a real experiment, this is a good one.
+1. *TikTok's downscaler is bad* — came from blog posts, **never measured**
+   (still open, §8.3).
+2. The CLI's 4K→1080p transcode took **17 minutes** on the owner's 2-core
+   laptop — now optional (`--1080p`), since 4K uploads are accepted as-is.
+
+**Recommendation stands as the measured-safe default** — shoot/export 1080p60
+HDR and the whole job is a ~1 second lossless remux — but the tool no longer
+nags when you bring a 4K60 or 120 fps file. If you post one, measure the
+delivery; that single result updates this section again.
 
 ### 2.7 Hardware limits on the owner's laptop
 
@@ -285,7 +294,7 @@ recalculating and why the media data is provably untouched.
 
 ```
 UNIT
-  engine                 14 passed
+  engine                 17 passed
   probe                  34 assertions
   remux                  12 passed
   duration patch         13 passed
@@ -353,7 +362,8 @@ Pattern: I reasoned from how systems *should* work. The owner tested how this on
 ## 7. The recipe (current best known method)
 
 ```
-1. Shoot/export 1080p60 HDR — not 4K
+1. Shoot/export 1080p60 HDR (measured-safe default) — 4K60 and 120 fps are
+   accepted by TikTok too; delivery above 1080p is unverified for our account
 2. Transfer to PC losslessly (iPhone: "Keep Originals" + USB)
 3. HDR file:  ./vague.sh clip.mp4 --remux-only        (keep DV, no patch)
    SDR file:  ./vague.sh clip.mp4 --remux-only --patch   (patch optional)
@@ -392,8 +402,10 @@ Remaining:
    *delivers*, not what they *uploaded*.
 
 3. **"TikTok's 4K downscaler is bad" is unverified.** It came from blog posts and
-   was repeated by the previous assistant. If it turns out to be fine, the entire
-   4K→1080p transcode path becomes unnecessary.
+   was repeated by the previous assistant. 4K uploads are now *accepted*
+   (owner-verified, engine updated), so the experiment got simpler: post the
+   same clip once as 4K and once as `--1080p`-downscaled, download both back,
+   compare. If the 4K one is served no worse, the transcode path is dead.
 
 4. **Unexplored levers:** `btrt` declared bitrate, keyframe/`stss` density,
    resolution bucket edges, uploading AV1. A variant generator (one field changed
@@ -424,6 +436,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 15 | Duration patch broke an upload → traced to zeroing `tkhd`/`mdhd` → now `mvhd` only, value 1. |
 | 16 | Owner confirmed a paying creator's file shows **00:00 + HDR** and uploads via **Files/attach on the phone** → that's the complete paid method, and the desktop/patch incompatibility is explained. |
 | 17 | Installed real Chromium and wrote genuine end-to-end tests. Found two bugs — **both in the tests, not the product**. |
+| 18 | **Owner verified TikTok accepts 4K 60 fps (and has seen 120 fps served)** → engine limits raised (2160×3840, 120 fps, 4K HDR), all surfaces stop warning about 4K, CLI keeps 4K by default with `--1080p` as the optional downscale. Acceptance ≠ delivery: whether our account is *served* >1080p is still unmeasured. |
 
 ---
 

@@ -26,7 +26,7 @@ const CASES = [
     platform: 'tiktok', opts: { uploadPath: 'web' },
   },
   {
-    name: '120fps source → TikTok (clean ÷2 to 60, not ragged decimation)',
+    name: '120fps source → TikTok (PRESERVED — TikTok accepts 120, owner-verified Sept 2026)',
     src: { path: 'slowmo.mov', width: 1080, height: 1920, fps: 120, vfr: false,
            hdr: false, bitrateMbps: 90, durationSec: 15 },
     platform: 'tiktok', opts: { uploadPath: 'web' },
@@ -81,9 +81,9 @@ console.log('  59.94 must NOT be rounded to 60 (would duplicate frames):');
 const r5994 = plan({ width:1080, height:1920, fps:59.94, hdr:false, bitrateMbps:40, durationSec:20 }, 'tiktok');
 check(`got ${r5994.output.fps}`, r5994.output.fps === 59.94);
 
-console.log('  120fps must land on exactly 60 via integer divisor:');
+console.log('  120fps is PRESERVED on TikTok (owner-verified acceptance):');
 const r120 = plan({ width:1080, height:1920, fps:120, hdr:false, bitrateMbps:90, durationSec:10 }, 'tiktok');
-check(`got ${r120.output.fps} (÷${r120.decisions.fps.divisor})`, r120.output.fps === 60 && r120.decisions.fps.divisor === 2);
+check(`got ${r120.output.fps} (unchanged, no divisor)`, r120.output.fps === 120 && !r120.decisions.fps.divisor && !r120.decisions.fps.changed);
 
 console.log('  Never upscale:');
 const rUp = plan({ width:720, height:1280, fps:30, hdr:false, bitrateMbps:3.2, durationSec:30 }, 'tiktok');
@@ -98,13 +98,22 @@ check('ios_app keeps HDR',  plan(hdrSrc,'ig_reels',{uploadPath:'ios_app'}).outpu
 check('web tonemaps to SDR', plan(hdrSrc,'ig_reels',{uploadPath:'web'}).output.hdr === false);
 check('tiktok KEEPS HDR (corrected 2026-09)', plan(hdrSrc,'tiktok',{uploadPath:'web'}).output.hdr === true);
 
-console.log('  Landscape 4K must become 1920x1080, not squeezed:');
+console.log('  4K is ACCEPTED as-is on TikTok (owner-verified Sept 2026):');
 const rLand = plan({ width:3840, height:2160, fps:60, hdr:false, bitrateMbps:120, durationSec:20 }, 'tiktok');
-check(`3840x2160 -> ${rLand.output.width}x${rLand.output.height}`, rLand.output.width === 1920 && rLand.output.height === 1080);
-
-console.log('  Portrait 4K must become 1080x1920:');
+check(`3840x2160 stays ${rLand.output.width}x${rLand.output.height}`, rLand.output.width === 3840 && rLand.output.height === 2160);
 const rPort = plan({ width:2160, height:3840, fps:60, hdr:false, bitrateMbps:120, durationSec:20 }, 'tiktok');
-check(`2160x3840 -> ${rPort.output.width}x${rPort.output.height}`, rPort.output.width === 1080 && rPort.output.height === 1920);
+check(`2160x3840 stays ${rPort.output.width}x${rPort.output.height}`, rPort.output.width === 2160 && rPort.output.height === 3840);
+
+console.log('  4K60 HDR stays 4K HDR (no forced downscale or tonemap):');
+const r4khdr = plan({ width:2160, height:3840, fps:60, hdr:true, hdrFormat:'dolbyvision', bitrateMbps:180, durationSec:20 }, 'tiktok', { uploadPath:'web' });
+check(`got ${r4khdr.output.width}x${r4khdr.output.height} ${r4khdr.output.hdr ? 'HDR' : 'SDR'}`,
+  r4khdr.output.width === 2160 && r4khdr.output.height === 3840 && r4khdr.output.hdr === true);
+
+console.log('  Forced --1080p still downscales with correct orientation (never 1080x608):');
+const rF = plan({ width:3840, height:2160, fps:60, hdr:false, bitrateMbps:120, durationSec:20 }, 'tiktok', { force1080:true });
+check(`landscape 3840x2160 -> ${rF.output.width}x${rF.output.height}`, rF.output.width === 1920 && rF.output.height === 1080);
+const rF2 = plan({ width:2160, height:3840, fps:60, hdr:false, bitrateMbps:120, durationSec:20 }, 'tiktok', { force1080:true });
+check(`portrait 2160x3840 -> ${rF2.output.width}x${rF2.output.height}`, rF2.output.width === 1080 && rF2.output.height === 1920);
 
 console.log('  Story caps at 30fps, and says so:');
 const rStory = plan({ width:1080, height:1920, fps:60, hdr:false, bitrateMbps:40, durationSec:14 }, 'ig_story');

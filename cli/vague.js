@@ -3,10 +3,11 @@
  * Vague CLI — local transcoder for TikTok / Instagram uploads.
  *
  * Does the things a browser cannot:
- *   • downscale 4K → 1080p while PRESERVING Dolby Vision (dovi_tool RPU carry)
+ *   • optional 4K → 1080p downscale (--1080p) PRESERVING Dolby Vision
+ *     (dovi_tool RPU carry) — 4K is kept by default now, TikTok accepts it
  *   • preserve HLG / HDR10 with correct tagging
  *   • force CFR at the source's exact frame rate (kills the 60→30 problem)
- *   • high-quality Lanczos scaling instead of the platform's fast downscaler
+ *   • high-quality Lanczos scaling if you do downscale
  *   • verify the output before handing it to you
  *
  * Usage:
@@ -14,7 +15,10 @@
  *
  *   --platform tiktok|ig_reels|ig_story|yt_shorts   (default tiktok)
  *   --out <file>        output path
- *   --keep-4k           don't downscale (default is downscale to 1080p)
+ *   --keep-4k           kept for compatibility — 4K is now the default
+ *                       (TikTok accepts 4K 60 and 120 fps, owner-verified)
+ *   --1080p             downscale to 1080p anyway (Lanczos). Optional A/B:
+ *                       does your own 1080p beat TikTok's delivery from 4K?
  *   --sdr               force SDR tonemap even if HDR is possible
  *   --patch             movie-header duration -> 1 tick: shows 00:00 in galleries
  *                       and file browsers, but the track keeps real timing so
@@ -63,6 +67,7 @@ const input     = argv[0];
 const platform  = opt('platform', 'tiktok');
 const DRY       = flag('dry-run');
 const KEEP4K    = flag('keep-4k');
+const DOWN1080  = flag('1080p');
 const FORCE_SDR = flag('sdr');
 const PATCH_AGG = flag('patch-aggressive');
 const PATCH     = flag('patch') || PATCH_AGG;
@@ -412,6 +417,7 @@ async function probeSource(file, tools) {
   // ---- plan ---------------------------------------------------------------
   const p = plan({ ...src, path: input, outPath }, platform, {
     uploadPath: 'web',
+    force1080: DOWN1080,              // optional: TikTok accepts 4K now
     preconditioning: !src.hdr,           // never denoise/sharpen an HDR master
   });
   const o = p.output;

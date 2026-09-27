@@ -40,8 +40,9 @@ container layout changes, so the file size is identical:
 | Strip Dolby Vision | `dvcC` → `free` *(off by default — see HANDOFF)* |
 | Duration patch | `mvhd` duration → 1 tick, shows 00:00 *(opt-in · SDR only — refused on HDR input, see HANDOFF §2.3b)* |
 
-**Transcodes** (CLI only) — 4K → 1080p while preserving Dolby Vision, via
-`dovi_tool` extract → encode → inject → verify.
+**Transcodes** (CLI only) — optional 4K → 1080p downscale (`--1080p`) while
+preserving Dolby Vision, via `dovi_tool` extract → encode → inject → verify.
+4K is kept by default now — TikTok accepts it.
 
 **Verifies** — download your post back from TikTok and compare what you sent
 against what they served.
@@ -50,9 +51,12 @@ against what they served.
 
 ## The honest part
 
-**Every platform re-encodes every upload.** TikTok delivers around 1080p at
-2–2.5 Mbps whatever you send. No tool prevents that — anything claiming "no
-compression" is describing the file it hands back, not what viewers receive.
+**Every platform re-encodes every upload.** TikTok *accepts* up to 4K and
+120 fps — then serves viewers what its delivery ladder decides; on our
+reference that measured ~1080p at 2–2.5 Mbps. No tool prevents the re-encode —
+anything claiming "no compression" is describing the file it hands back, not
+what viewers receive. What *your* account is served is measurable: post,
+download the post back, and use the compare tool.
 
 What you can control is the quality of the source their encoder works from, and
 whether your frame rate and colour survive the trip.
@@ -105,7 +109,7 @@ bash test/run-all.sh
 ```
 
 ```
-engine  14 · probe  34 · remux  12 · duration patch  13
+engine  17 · probe  34 · remux  12 · duration patch  13
 rebrand + edit lists  10 · strip Dolby Vision  11
 website  38 · extension  23        (real Chromium)
 ```
@@ -123,7 +127,8 @@ sudo apt install -y xvfb libnspr4 libnss3 libasound2t64 libatk1.0-0t64 \
 ## Current best method
 
 ```
-1. Shoot / export 1080p60 HDR — not 4K
+1. Shoot / export 1080p60 HDR (measured-safe default) — 4K60 and 120 fps are
+   accepted by TikTok too; delivery above 1080p is unverified for our account
 2. Transfer to PC losslessly  (iPhone: Settings → Photos → Keep Originals, then USB)
 3. Fix the container  (website, extension, or ./vague.sh --remux-only)
 4. Move back to the phone losslessly
