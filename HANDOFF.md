@@ -671,7 +671,25 @@ Kept so a new assistant doesn't repeat a dead end.
 | 20 | **FIRST DELIVERY MEASUREMENT**: owner uploaded 4K60 Dolby Vision (patched) — app shows 4K 60 but no Dolby badge; the third-party download of the post reads **HDR 4K 60** in the gallery. TikTok delivers 4K60 HDR → §2.1/§2.6/§7/§8 updated, "shoot 1080p" advice retired, §2.3b signature reproduced. |
 | 21 | **Owner follow-up on the 4K60 test**: patched file crashed the phone gallery (Photos force-closes; patched files now live in Files, never Photos — §2.3). Creators' HDR posts badge + render slower in-app; ours played instantly with no badge → HDR pipeline was skipped; downloaded-post HDR tags = tag survival, not playback. §2.6 downgraded from "delivers 4K60 HDR" to "delivers 4K60; HDR tags ≠ HDR playback". |---
 | 22 | **Downloader echo discovered**: post downloads are mixed — some show 00:00 and won't play (our own patched upload, stored & served by TikTok), some play normally. "HDR 4K 60" tag readings on downloads are unreliable until the download plays with a normal duration. Compare tool now warns about this. Owner agreed to the decisive unpatched-HDR test (§8.1). |
-| 23 | **Found and implemented the actual paid method**: ut0ku/120fps-method (open source) — divide mvhd+mdhd timescale+duration by 2/4 so TikTok's encoder reads half the fps and decimates nothing. Lossless, real duration kept, HDR-safe. Default-on for >48fps on all surfaces (`--method`/`#method`/`#vg-method`); 13-check unit suite + browser e2e. Owner context: creators' uploads showed 00:00 (paid tools combine BOTH patches); their delivered posts still crash the gallery. |## 9. Standing preferences
+| 23 | **Found and implemented the actual paid method**: ut0ku/120fps-method (open source) — divide mvhd+mdhd timescale+duration by 2/4 so TikTok's encoder reads half the fps and decimates nothing. Lossless, real duration kept, HDR-safe. Default-on for >48fps on all surfaces (`--method`/`#method`/`#vg-method`); 13-check unit suite + browser e2e. Owner context: creators' uploads showed 00:00 (paid tools combine BOTH patches); their delivered posts still crash the gallery. |### Session pause note (27 Sept 2026, late)
+
+Owner is tired — stop designing multi-step owner-run protocols. Wins this
+session are real and shipped: frame-rate method implemented + measured
+working (smooth 60fps), 00:00 patch correctly retired (TikTok blocks it),
+tool exonerated by the C-variant (untouched original also showed no HDR),
+source confirmed HDR (kit card appeared).
+
+**Prime remaining hypothesis (untested, cheap to check): account/region HDR
+gating.** The owner SEES HDR on other creators' posts on their device
+(playback works), but their own posts never render HDR regardless of file —
+including their untouched original. Owner is in Nepal (region-cohort delivery
+is plausible); smaller/newer accounts may also get lower processing tiers.
+Next session: verify "Allow high-quality uploads" is ON (Settings → Content
+preferences), then ONE simple post via the normal Fix button — no kits, no
+lettered variants. If that still fails, the answer is account-side and no
+file-side work will change it.
+
+## 9. Standing preferences
 | 24 | **Owner: HDR is the main target — others patch HDR, we refused it.** §2.3b block LIFTED on all surfaces (patch on HDR = experimental + confound note: the failed test went through the gallery, which re-encodes; creators' patched HDR delivers). CLI `--patch --method` on HDR now builds the full paid-method file (1-tick + timescale ÷2 + DV kept, byte-identical). Clean A/B recorded at §8.7. |
 | 25 | **Studio "Only me" → flip-to-Everyone route** relayed by the owner from creator sites: desktop upload as private, flip visibility in the app — keeps 60fps/1080p/HDR/HEVC. It's a file route (no gallery re-encode) whose app-side flip reconciles the old "desktop HDR = SDR" observation; pairs with the frame-rate method (real duration passes Studio validation). All surfaces updated; checklist's "never Only me" line made route-dependent (§2.10). |- Personal use — no monetisation advice
 | 26 | **Owner pre-test observations**: creators' 00:00-patched files DO show full visible HDR in-feed (00:00+HDR works in the wild); TikTok shows no HDR tag — HDR is judged by the visible effect, not a badge ("badge" wording corrected across surfaces). Owner running the Studio-flip / method test next. |- Wants real working software, not specs or mockups
