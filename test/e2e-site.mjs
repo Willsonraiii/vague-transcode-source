@@ -107,6 +107,20 @@ if (out) {
   chk('HDR routes shown: Studio Only-me flip + phone file route', /Only me/.test(after2) && /Everyone/.test(after2));
 }
 
+/* ------------------------------ 3b. HDR A/B test kit */
+console.log('\n── 3b. HDR A/B test kit ──');
+const kitNames = [];
+await page.locator('#abkit').click();
+for (let i = 0; i < 3; i++) {
+  const d = await page.waitForEvent('download', { timeout: 30000 });
+  kitNames.push(d.suggestedFilename());
+}
+chk('kit builds 3 files', kitNames.length === 3, `  ${kitNames.join(' · ')}`);
+chk('A = method variant', /A-method\.mp4$/.test(kitNames[0] || ''));
+chk('B = plainHDR variant present', kitNames.some(n => /B-plainHDR/.test(n)));
+chk('C = untouched control present', kitNames.some(n => /C-untouched/.test(n)));
+chk('kit decoder rendered', /B shows HDR, A doesn/.test(await page.evaluate(() => document.body.textContent)));
+
 /* ------------------------------------- 4. SDR file gets desktop guidance */
 console.log('\n── 4. SDR file routes to desktop ──');
 await load();

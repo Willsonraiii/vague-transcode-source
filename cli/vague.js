@@ -28,6 +28,9 @@
  *   --patch-aggressive  also zero track + media headers (BREAKS TikTok uploads)
  *   --force-patch       (compatibility) accepted, no longer needed — --patch runs
  *                       on HDR with an experimental warning (§2.3b is confounded)
+ *   --kit               A/B test kit: write -A-method / -B-plainHDR / -C-untouched
+ *                       variants of the input (post them all the same way,
+ *                       then compare what TikTok delivered)
  *   --method            the 60/120fps method: divide mvhd+mdhd timescale by 2
  *                       (60fps) or 4 (120fps) so TikTok's encoder reads half
  *                       the frame rate and decimates nothing. Lossless, keeps
@@ -79,6 +82,7 @@ const PATCH_AGG = flag('patch-aggressive');
 const PATCH     = flag('patch') || PATCH_AGG;
 const FORCE_PATCH = flag('force-patch');
 const METHOD     = flag('method');
+const KIT        = flag('kit');
 const REMUX     = flag('remux-only');
 const GPU       = flag('gpu');
 const UPLOAD    = flag('upload');
@@ -356,6 +360,31 @@ async function probeSource(file, tools) {
       return;
     }
     const { faststartRemux } = await import('../extension/remux.js');
+    if (KIT) {
+      const buf0 = fs.readFileSync(input);
+      const file0 = {
+        name: path.basename(input), size: buf0.length, type: 'video/mp4',
+        arrayBuffer: async () => buf0.buffer.slice(buf0.byteOffset, buf0.byteOffset + buf0.length),
+      };
+      const dir = path.dirname(outPath), stem = path.basename(outPath, path.extname(outPath));
+      const div = src.fps > 90 ? 4 : src.fps > 48 ? 2 : 0;
+      const variants = [
+        { sfx: 'A-method', opts: { rebrand: true, stripEdits: true, fpsGuard: div } },
+      ];
+      if (src.hasDolbyVisionRPU)
+        variants.push({ sfx: 'B-plainHDR', opts: { rebrand: true, stripEdits: true, fpsGuard: div, stripDV: true } });
+      variants.push({ sfx: 'C-untouched', opts: {} });
+      head('A/B test kit');
+      for (const v of variants) {
+        const rr = await faststartRemux(file0, () => {}, v.opts);
+        const p2 = path.join(dir, `${stem}-${v.sfx}${v.sfx === 'C-untouched' ? path.extname(input) : '.mp4'}`);
+        fs.writeFileSync(p2, Buffer.from(await rr.blob.arrayBuffer()));
+        say(`  ${C.g}✓${C.x} ${p2}`);
+      }
+      say(`\n  ${C.b}Post all of them the SAME way (Studio "Only me" -> flip in the app), wait 30 min,${C.x}`);
+      say(`  ${C.b}then download each back and compare. A HDR = done · B-only = use --no-dv · C-only = bug · none = route/format.${C.x}`);
+      return;
+    }
     const buf = fs.readFileSync(input);
     const fileLike = {
       name: path.basename(input), size: buf.length, type: 'video/mp4',
