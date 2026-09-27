@@ -452,11 +452,11 @@ async function probeSource(file, tools) {
     }
     say(`\n${C.g}✓ ${outPath}${C.x}  (${(fs.statSync(outPath).size/1048576).toFixed(1)} MB — streams copied, no quality change)`);
     if (src.hdr) {
-      say(`\n  ${C.B}📱 HDR file — two routes that keep it:${C.x}`);
-      say(`  ${C.b}A. TikTok Studio (desktop) as "Only me" → then flip to Everyone IN THE APP.${C.x}`);
-      say(`  ${C.d}   Community-verified: 60fps · 1080p · HDR · HEVC survive. Works with --method`);
-      say(`     files (real duration — Studio refuses 00:00 patched files).${C.x}`);
-      say(`  ${C.b}B. Phone file route: Files picker / iOS share sheet (Files → Share → TikTok).${C.x}`);
+      say(`\n  ${C.B}💻 HDR file — upload from TikTok STUDIO (laptop, or phone in desktop mode):${C.x}`);
+      say(`  ${C.b}The method: "Only me" → then flip to Everyone IN THE APP.${C.x}`);
+      say(`  ${C.d}Community-verified: HDR · high quality · high fps survive. Studio is the file`);
+      say(`  route the processed file is FOR — the app's own upload path degrades quality.`);
+      say(`  Works with --method files (real duration — Studio refuses 00:00 patched files).${C.x}`);
       say(`  ${C.d}Transfer losslessly: USB · Telegram "Send as File" · python3 -m http.server 8000${C.x}`);
       say(`  ${C.y}📎 In the app, attach via "Files" — NOT the gallery (gallery re-encodes).${C.x}`);
     } else {

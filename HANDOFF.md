@@ -344,7 +344,18 @@ their screen and this isn't it. Open diagnosis, one download-back discriminates:
 8-bit; (b) real HDR format, bitrate-starved → 10-bit PQ/HLG tags + low Mbps;
 (c) source was HLG not DV → check the uploaded file's tags in the compare.
 
-### 2.10 The Studio "Only me" → app-flip route ⭐ (community-verified, untested by us)
+### 2.10 The Studio route is THE method ⭐ (owner-corrected, Sept 2026)
+
+**Owner correction:** the tool exists to prepare files for a **TikTok Studio
+upload** — not to route people into the app's picker. App-uploaded videos
+degrade (owner observation: app-route quality suffers; the processing tool
+would be pointless if the app picker were the answer). **Studio — laptop
+browser, or the phone's browser in desktop mode — is the route that delivers
+HDR · high quality · high fps.** All surfaces now present Studio as the
+primary route; phone file routes are fallbacks only.
+
+The method (community-verified): Studio upload as **"Only me"** → open the
+app → flip visibility to **Everyone**.
 
 Multiple sites/creators report the upload route that preserves everything:
 
