@@ -394,8 +394,9 @@ async function probeSource(file, tools) {
       say(`  ${C.y}     the gallery (owner-tested). Store it in the Files app.${C.x}`);
       say(`  ${C.d}Showing 00:00 in your gallery is expected. That is the patch working.${C.x}`);
       if (src.hdr)
-        say(`  ${C.y}   ⚠ experimental on HDR — check the post for the HDR badge; if absent,${C.x}`);
-        say(`  ${C.y}     re-post without --patch (§2.3b confound documented in HANDOFF)${C.x}`);
+        say(`  ${C.y}   ⚠ experimental on HDR — TikTok shows no HDR tag; check whether it${C.x}`);
+        say(`  ${C.y}     VISIBLY plays HDR (highlights pop on an HDR screen). If not, re-post${C.x}`);
+        say(`  ${C.y}     without --patch (§2.3b confound documented in HANDOFF)${C.x}`);
     }
     process.stderr.write('\n');
 

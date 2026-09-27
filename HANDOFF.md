@@ -128,6 +128,12 @@ So the HDR data survives TikTok's pipeline completely. What fails is
 **playback**: the TikTok player will not switch into HDR mode for a file whose
 movie-header duration reads 00:00. HDR playback needs valid duration metadata.
 
+**Further weakening (owner, Sept 2026):** the creators whose posts show FULL
+visible HDR in-feed also had **00:00-patched files** (confirmed by them) — so
+00:00 + HDR coexist in the wild. Also: **TikTok shows no HDR tag at all** —
+"badge" language in earlier notes was wrong; the signal is the VISIBLE HDR
+effect on an HDR screen (+ slower first render).
+
 **Consequences — ⚠ STATUS DISPUTED (27 Sept 2026, owner direction):**
 
 | Content | Duration patch |
@@ -591,7 +597,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 23 | **Found and implemented the actual paid method**: ut0ku/120fps-method (open source) — divide mvhd+mdhd timescale+duration by 2/4 so TikTok's encoder reads half the fps and decimates nothing. Lossless, real duration kept, HDR-safe. Default-on for >48fps on all surfaces (`--method`/`#method`/`#vg-method`); 13-check unit suite + browser e2e. Owner context: creators' uploads showed 00:00 (paid tools combine BOTH patches); their delivered posts still crash the gallery. |## 9. Standing preferences
 | 24 | **Owner: HDR is the main target — others patch HDR, we refused it.** §2.3b block LIFTED on all surfaces (patch on HDR = experimental + confound note: the failed test went through the gallery, which re-encodes; creators' patched HDR delivers). CLI `--patch --method` on HDR now builds the full paid-method file (1-tick + timescale ÷2 + DV kept, byte-identical). Clean A/B recorded at §8.7. |
 | 25 | **Studio "Only me" → flip-to-Everyone route** relayed by the owner from creator sites: desktop upload as private, flip visibility in the app — keeps 60fps/1080p/HDR/HEVC. It's a file route (no gallery re-encode) whose app-side flip reconciles the old "desktop HDR = SDR" observation; pairs with the frame-rate method (real duration passes Studio validation). All surfaces updated; checklist's "never Only me" line made route-dependent (§2.10). |- Personal use — no monetisation advice
-- Wants real working software, not specs or mockups
+| 26 | **Owner pre-test observations**: creators' 00:00-patched files DO show full visible HDR in-feed (00:00+HDR works in the wild); TikTok shows no HDR tag — HDR is judged by the visible effect, not a badge ("badge" wording corrected across surfaces). Owner running the Studio-flip / method test next. |- Wants real working software, not specs or mockups
 - Wants all three surfaces at feature parity (website and extension must not lag
   the CLI)
 - Prefers being shown the command to run over long explanations
