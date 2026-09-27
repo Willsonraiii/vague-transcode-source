@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "Vague Guard \u2014 HD upload for TikTok & Instagram",
+  "version": "0.1.0",
+  "description": "Scans your video before upload and tells you exactly what will cost you quality \u2014 frame rate, HDR tagging, codec and bitrate. Everything runs locally.",
+  "permissions": [
+    "storage",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "https://www.tiktok.com/*",
+    "https://www.instagram.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.tiktok.com/tiktokstudio/upload*",
+        "https://www.tiktok.com/upload*",
+        "https://www.tiktok.com/creator-center/upload*",
+        "https://www.instagram.com/create/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "panel.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "probe.js",
+        "profiles.js",
+        "hdr-doctor.js",
+        "offscreen.html",
+        "offscreen.js",
+        "remux.js"
+      ],
+      "matches": [
+        "https://www.tiktok.com/*",
+        "https://www.instagram.com/*"
+      ]
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_title": "Vague Guard",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

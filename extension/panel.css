@@ -1,0 +1,68 @@
+#vague-guard{
+  position:fixed; top:84px; right:20px; width:340px; z-index:2147483647;
+  background:#fff; color:#161310; border:2.5px solid #161310; border-radius:16px;
+  box-shadow:6px 6px 0 #161310; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:13px; font-weight:700; max-height:calc(100vh - 120px); display:flex; flex-direction:column;
+}
+#vague-guard *{box-sizing:border-box}
+.vg-head{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:2.5px solid #161310;background:#ffd75e;border-radius:13px 13px 0 0}
+.vg-logo{width:22px;height:22px;border:2px solid #161310;border-radius:7px;background:#fff;display:grid;place-items:center;font-weight:900;font-size:12px}
+.vg-head strong{font-size:14px;letter-spacing:.2px}
+.vg-close{margin-left:auto;border:2px solid #161310;background:#fff;border-radius:7px;width:22px;height:22px;
+  cursor:pointer;font-size:14px;line-height:1;font-weight:900;padding:0}
+.vg-body{padding:13px;overflow-y:auto}
+.vg-idle{font-size:12.5px;opacity:.7;text-align:center;padding:18px 6px}
+
+.vg-verdict{border:2.5px solid #161310;border-radius:11px;padding:9px 11px;font-weight:900;font-size:13px;margin-bottom:10px}
+.vg-v-bad{background:#ffe3e3} .vg-v-ok{background:#d6f2e4}
+
+.vg-tool{background:#ffe9d0;border:2.5px solid #161310;border-radius:11px;padding:9px 11px;
+  font-size:11.5px;line-height:1.5;margin-bottom:10px;font-weight:700}
+
+.vg-rows{display:flex;flex-direction:column;gap:7px;margin-bottom:11px}
+.vg-row{display:grid;grid-template-columns:20px 1fr auto;gap:7px;align-items:baseline;
+  border:2px solid #161310;border-radius:10px;padding:8px 9px;background:#fff}
+.vg-row.vg-ok{background:#f2fbf6} .vg-row.vg-warn{background:#fff8e6} .vg-row.vg-bad{background:#ffeff0}
+.vg-icon{font-weight:900;text-align:center;font-size:12px}
+.vg-ok .vg-icon{color:#1f9d55} .vg-warn .vg-icon{color:#b8860b} .vg-bad .vg-icon{color:#e5484d}
+.vg-label{font-size:12px;font-weight:800}
+.vg-value{font-size:11px;font-weight:800;opacity:.75;white-space:nowrap;font-variant-numeric:tabular-nums}
+.vg-note{grid-column:2/4;font-size:11px;font-weight:600;opacity:.8;line-height:1.45;margin-top:3px}
+
+.vg-fix{width:100%;border:2.5px solid #161310;border-radius:12px;padding:11px;font-size:13.5px;font-weight:900;
+  cursor:pointer;background:#ffd75e;box-shadow:3px 3px 0 #161310;font-family:inherit;transition:.12s}
+.vg-fix:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 #161310}
+.vg-fix:disabled{background:#eee;cursor:default;box-shadow:none;opacity:.6}
+
+.vg-hint{font-size:10.5px;opacity:.6;text-align:center;margin-top:8px;font-weight:700}
+.vg-cmd{margin-top:9px;font-size:11px}
+.vg-cmd summary{cursor:pointer;font-weight:800;opacity:.7}
+.vg-cmd code{display:block;margin-top:6px;background:#161310;color:#fdf6e9;padding:9px;border-radius:9px;
+  font-size:9.5px;line-height:1.45;word-break:break-all;font-family:ui-monospace,Menlo,monospace}
+
+.vg-raw code{font-size:9px;line-height:1.5;white-space:pre-wrap;background:#161310;color:#9fe8a0;max-height:230px;overflow:auto}
+.vg-raw summary{color:#b8860b}
+
+.vg-v-best{background:#d6f2e4;border-color:#161310}
+.vg-asis{background:#eafaf0;border:2.5px solid #161310;border-radius:11px;padding:10px 11px;
+  font-size:11.5px;line-height:1.5;margin-bottom:10px;font-weight:700}
+.vg-asis b{font-weight:900}
+.vg-sub{margin-top:5px;opacity:.85;font-weight:700}
+.vg-fix.vg-secondary{background:#fff;font-size:12px;padding:9px;opacity:.75}
+.vg-fix.vg-secondary:hover{opacity:1}
+
+.vg-fix.vg-lossless{background:#3fbf6f;color:#fff;margin-bottom:8px}
+.vg-fix.vg-lossless:hover{background:#35a75f}
+
+.vg-held{background:#ffd75e;border:2.5px solid #161310;border-radius:11px;padding:8px 11px;
+  font-size:12px;font-weight:900;margin-bottom:10px;text-align:center;letter-spacing:.2px}
+.vg-held.vg-going{background:#3fbf6f;color:#fff}
+.vg-actions{display:flex;flex-direction:column;gap:7px;margin-bottom:4px}
+.vg-actions .vg-fix{margin:0}
+.vg-fix.vg-cancel{background:#fff;font-size:11.5px;padding:7px;opacity:.6;box-shadow:2px 2px 0 #161310}
+.vg-fix.vg-cancel:hover{opacity:1}
+
+.vg-opt{display:block;border:2.5px solid #161310;border-radius:11px;padding:9px 10px;
+  background:#fff6d9;font-size:11.5px;font-weight:800;cursor:pointer;line-height:1.45}
+.vg-opt input{margin-right:5px;transform:translateY(1px)}
+.vg-opt span{display:block;margin-top:4px;font-weight:600;opacity:.8;font-size:10.5px}

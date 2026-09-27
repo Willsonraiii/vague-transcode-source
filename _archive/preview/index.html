@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Vague Transcode — corrected preview</title>
+<link rel="stylesheet" href="style.css"/>
+</head><body><div class="wrap">
+
+<div class="topbar">
+  <span class="logo"><svg viewBox="0 0 24 24"><path d="M4 4h4.2l3.8 11 3.8-11H20l-6 16h-4L4 4Z" fill="#161310"/></svg></span>
+  <span class="brand"><b>VAGUE</b><span>TRANSCODE</span></span>
+  <span class="lang"><b>ID</b><b class="on">EN</b></span>
+</div>
+
+<nav class="tabs">
+  <a href="index.html" class="on">Encode</a>
+  <a href="nova.html">Nova</a>
+  <a href="checker.html">Checker</a>
+</nav>
+
+<div class="card">
+  <span class="eyebrow"><span class="dot"></span> Encode Video</span>
+  <h1>Transcode video.</h1>
+  <p class="sub">Choose the method you want to use. <mark>60fps in, 60fps out.</mark></p>
+
+  <div class="methods">
+    <div class="m on"><span class="tag">ACTIVE</span><i style="background:var(--cyan)">⚡</i><b>Pulse</b></div>
+    <div class="m"><i style="background:var(--pink)">🔥</i><b>Forge</b></div>
+    <div class="m"><i style="background:var(--amber)">✦</i><b>Nova</b></div>
+  </div>
+
+  <div class="box mint">
+    <div class="row"><span class="kick">ACTIVE</span><span class="pill free">Free</span><span class="pill">On-device</span></div>
+    <h3>Vague Pulse</h3>
+    <p>Runs entirely in your browser — your file never leaves the device. Best for
+       SDR clips up to 1080p60.</p>
+    <p>Source frame rate preserved exactly. <span class="hl">HDR not supported</span> — use Nova for 10-bit.</p>
+  </div>
+
+  <div class="drop">
+    <div class="plus">+</div>
+    <b>Choose a video</b>
+    <small>MP4, MOV, MKV, WebM</small>
+  </div>
+
+  <button class="btn">Choose a video first</button>
+  <a class="btn ghost" href="checker.html">TikTok Checker</a>
+</div>
+
+<div class="card">
+  <span class="eyebrow"><span class="dot" style="background:var(--cyan)"></span> Why this matters</span>
+  <h2 class="sec">Your 60fps export<br>stays 60fps.</h2>
+  <p class="sub" style="margin-bottom:12px">Four separate bugs steal your frame rate. Most tools fix none of them.</p>
+
+  <table class="diff">
+    <tr><th>Cause</th><th>What we do</th></tr>
+    <tr class="win"><td>VFR source<br><small style="opacity:.6">all iPhone footage</small></td><td>Lock to CFR at the <b>source's own rate</b></td></tr>
+    <tr class="win"><td>59.94 → 60<br><small style="opacity:.6">duplicate frames</small></td><td>Snap to 3 decimals, never round across</td></tr>
+    <tr class="win"><td>120 → 60<br><small style="opacity:.6">ragged decimation</small></td><td>Integer divisors only, even cadence</td></tr>
+    <tr class="win"><td>Preset hardcodes 30</td><td>fps derived per file, never fixed</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <span class="eyebrow"><span class="dot" style="background:var(--green)"></span> The real win</span>
+  <h2 class="sec">Most creators lose<br>quality twice.</h2>
+  <p class="sub" style="margin-bottom:12px">Your phone re-encodes before TikTok even sees the file.
+     That first loss is avoidable — and it's the bigger one.</p>
+
+  <table class="diff">
+    <tr><th>Upload path</th><th>Lossy passes</th></tr>
+    <tr style="background:#ffe3e3"><td>Phone → TikTok app</td><td><b class="bad">2</b> phone, then TikTok</td></tr>
+    <tr><td>Phone → desktop → tiktok.com</td><td>1</td></tr>
+    <tr class="win"><td><b>Editor → Vague → TikTok Studio</b></td><td><b class="ok">1</b>, from a clean source</td></tr>
+  </table>
+
+  <p class="note" style="text-align:left;opacity:.82;margin-top:11px">
+    We can't stop TikTok re-encoding — nobody can. What we remove is the
+    <b>entire first generation of compression</b>, then hand their encoder the
+    richest source it will accept.
+  </p>
+</div>
+
+<div class="dark">
+  <b>UPLOAD ONCE. LOSE NOTHING YOU DIDN'T HAVE TO.</b><br><br>
+  <b>1 pass, not 2</b> — your phone's pre-upload re-encode is removed entirely<br>
+  <b>60fps in, 60fps out</b> — verified after upload, not promised before<br>
+  <b>HDR done right</b> — preserved where the platform carries it, properly
+  tonemapped where it can't. Never clipped to grey.
+</div>
+
+<footer>Preview build · not the live site<br>vague-hd/preview</footer>
+</div></body></html>

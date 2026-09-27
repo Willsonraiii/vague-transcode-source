@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>TikTok Checker — corrected preview</title>
+<link rel="stylesheet" href="style.css"/>
+</head><body><div class="wrap">
+
+<div class="topbar">
+  <span class="logo"><svg viewBox="0 0 24 24"><path d="M4 4h4.2l3.8 11 3.8-11H20l-6 16h-4L4 4Z" fill="#161310"/></svg></span>
+  <span class="brand"><b>VAGUE</b><span>TRANSCODE</span></span>
+  <span class="lang"><b>ID</b><b class="on">EN</b></span>
+</div>
+
+<nav class="tabs">
+  <a href="index.html">Encode</a>
+  <a href="nova.html">Nova</a>
+  <a href="checker.html" class="on">Checker</a>
+</nav>
+
+<div class="card">
+  <span class="eyebrow"><span class="dot" style="background:var(--cyan)"></span> Verify</span>
+  <h1>TikTok Checker.</h1>
+  <p class="sub">Probe any video — before upload, or after downloading it back.
+     <mark>Free, no key needed.</mark></p>
+
+  <div class="drop">
+    <div class="plus">+</div>
+    <b>Drop a video to probe</b>
+    <small>Reads locally · nothing is uploaded</small>
+  </div>
+</div>
+
+<div class="card">
+  <div class="row"><span class="kick">RESULT</span><span class="pill cost">Reels · iOS app</span></div>
+  <h2 class="sec">Source → Output → Delivered</h2>
+  <p class="sub" style="margin-bottom:12px">The third column is re-probed from the file
+     downloaded <em>back</em> from the platform. This is the proof.</p>
+
+  <table class="diff">
+    <tr><th>Field</th><th>Source</th><th>Our output</th><th>Platform</th></tr>
+    <tr><td>Resolution</td><td>3840×2160</td><td>1080×1920</td><td>1080×1920 <span class="ok">✓</span></td></tr>
+    <tr class="win"><td><b>Frame rate</b></td><td>59.94 VFR</td><td><b>59.94 CFR</b></td><td><b>59.94</b> <span class="ok">✓</span></td></tr>
+    <tr><td>Codec</td><td>HEVC Main10</td><td>HEVC Main10</td><td>AV1 <span class="ok">✓</span></td></tr>
+    <tr><td>Color</td><td>PQ / BT.2020</td><td>PQ / prof 8.4</td><td>HDR <span class="ok">✓</span></td></tr>
+    <tr><td>Bitrate</td><td>184 Mbps</td><td>19.1 Mbps</td><td>4.2 Mbps</td></tr>
+    <tr><td>Audio</td><td>PCM 48k</td><td>AAC 192k</td><td>AAC 128k</td></tr>
+  </table>
+
+  <p class="note" style="text-align:left;opacity:.8">
+    Bitrate always drops — every platform re-encodes, with no exceptions.
+    What we control is <b>what survives</b>: resolution bucket, frame rate,
+    and colour pipeline.
+  </p>
+</div>
+
+<div class="card">
+  <span class="eyebrow"><span class="dot" style="background:var(--red)"></span> Same file, uploaded raw</span>
+  <h2 class="sec">What happens without us</h2>
+  <table class="diff">
+    <tr><th>Field</th><th>Source</th><th>Platform</th></tr>
+    <tr><td>Resolution</td><td>3840×2160</td><td>1080×1920 <span style="opacity:.6">bilinear</span></td></tr>
+    <tr style="background:#ffe3e3"><td><b>Frame rate</b></td><td>59.94 VFR</td><td><b class="bad">30.00</b> <span class="bad">✗</span></td></tr>
+    <tr style="background:#ffe3e3"><td>Color</td><td>PQ / BT.2020</td><td><span class="bad">clipped SDR</span> <span class="bad">✗</span></td></tr>
+    <tr><td>Bitrate</td><td>184 Mbps</td><td>2.1 Mbps</td></tr>
+  </table>
+  <p class="note" style="text-align:left;opacity:.8">
+    VFR let the platform re-time to 30. Raw HDR got clipped, not tonemapped —
+    that's the washed-out grey look.
+  </p>
+</div>
+
+<div class="dark">
+  <b>WHY BUILD THIS FIRST</b><br>
+  It's free, needs no backend, and ranks for a dozen queries.<br>
+  Every person who probes a post-upload download <b>sees the problem you solve</b>.<br>
+  That's the funnel — not ads.
+</div>
+
+<footer>Preview build · not the live site<br>vague-hd/preview</footer>
+</div></body></html>

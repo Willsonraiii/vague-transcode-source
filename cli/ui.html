@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Vague</title>
+<style>
+:root{--ink:#161310;--cream:#fdf6e9;--mint:#d6f2e4;--amber:#ffd75e;--peach:#ffe9d0;
+  --cyan:#5fd8e8;--pink:#ff7a9c;--green:#3fbf6f;--red:#e5484d;--sh:4px 4px 0 var(--ink)}
+*{box-sizing:border-box}
+body{margin:0;padding:26px 16px 60px;min-height:100vh;color:var(--ink);font-weight:700;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:radial-gradient(900px 420px at 12% -10%,#ffe9d0 0,transparent 60%),
+             radial-gradient(800px 400px at 95% 6%,#d9f0ff 0,transparent 55%),var(--cream)}
+.wrap{max-width:660px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border:2.5px solid var(--ink);border-radius:18px;box-shadow:6px 6px 0 var(--ink);padding:18px}
+h1{font-size:30px;margin:0 0 2px;letter-spacing:-.5px}
+h1 span{background:var(--amber);padding:0 8px;border:2.5px solid var(--ink);border-radius:9px}
+.sub{margin:0;font-size:12.5px;opacity:.75}
+.tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.chip{border:2px solid var(--ink);border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:900;background:#fff}
+.chip.ok{background:var(--mint)} .chip.no{background:#ffe3e3}
+.drop{border:3px dashed var(--ink);border-radius:16px;padding:30px 16px;text-align:center;background:#fffdf6;cursor:pointer}
+.drop.hot{background:var(--mint)}
+.drop b{display:block;font-size:16px;margin-bottom:3px}
+.drop small{font-size:11.5px;opacity:.7}
+.pathrow{display:flex;gap:8px;margin-top:11px}
+input[type=text]{flex:1;border:2.5px solid var(--ink);border-radius:12px;padding:11px;font-family:inherit;
+  font-weight:700;font-size:12.5px;background:#fffdf6;box-shadow:inset 2px 2px 0 rgba(0,0,0,.06)}
+button{border:2.5px solid var(--ink);border-radius:12px;padding:11px 15px;font-family:inherit;font-weight:900;
+  font-size:13px;cursor:pointer;background:var(--amber);box-shadow:var(--sh);transition:.12s}
+button:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+button:disabled{opacity:.45;cursor:default;box-shadow:none}
+button.g{background:var(--green);color:#fff} button.w{background:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat{border:2.5px solid var(--ink);border-radius:13px;padding:10px 11px;background:#fff}
+.stat small{display:block;font-size:9.5px;letter-spacing:.9px;text-transform:uppercase;opacity:.65;font-weight:900}
+.stat b{display:block;font-size:15px;margin-top:2px}
+.row{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:baseline;border:2px solid var(--ink);
+  border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:12.5px}
+.row.ok{background:#f2fbf6} .row.warn{background:#fff8e6} .row.bad{background:#ffeff0}
+.row i{font-style:normal;font-weight:900;text-align:center}
+.row .n{grid-column:2/4;font-size:11px;font-weight:600;opacity:.8;margin-top:3px;line-height:1.45}
+.banner{border:2.5px solid var(--ink);border-radius:13px;padding:11px 13px;font-size:13px;font-weight:900;margin-bottom:11px}
+.b-best{background:var(--mint)} .b-warn{background:#ffe3e3} .b-info{background:var(--peach)}
+label.opt{display:flex;gap:8px;align-items:flex-start;border:2.5px solid var(--ink);border-radius:11px;
+  padding:9px 11px;background:#fff6d9;font-size:12px;cursor:pointer;margin-bottom:7px}
+label.opt span{font-weight:600;opacity:.8;font-size:10.8px;display:block;margin-top:2px}
+.bar{height:16px;border:2.5px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden;margin:9px 0}
+.bar i{display:block;height:100%;background:var(--cyan);width:0;transition:width .3s}
+pre{background:var(--ink);color:#9fe8a0;border-radius:11px;padding:10px;font-size:9.5px;line-height:1.5;
+  max-height:170px;overflow:auto;margin:0;white-space:pre-wrap}
+.hide{display:none}
+</style></head><body><div class="wrap">
+
+<div class="card">
+  <h1><span>VAGUE</span></h1>
+  <p class="sub">Local video optimizer — nothing leaves this machine.</p>
+  <div class="tools" id="tools"></div>
+</div>
+
+<div class="card">
+  <div class="drop" id="drop">
+    <b>Drop a video here</b>
+    <small>or paste the full file path below</small>
+  </div>
+  <div class="pathrow">
+    <input type="text" id="path" placeholder="C:\Users\you\Videos\master.mov"/>
+    <button id="scan">Scan</button>
+  </div>
+</div>
+
+<div id="result" class="hide"></div>
+<div id="progress" class="card hide">
+  <b id="stage">Working…</b>
+  <div class="bar"><i id="fill"></i></div>
+  <div class="sub"><span id="pct">0%</span> <span id="speed"></span></div>
+  <pre id="log"></pre>
+</div>
+
+</div><script>
+const TOOLS = __TOOLS__;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let cur = null;
+
+$('#tools').innerHTML = [
+  ['ffmpeg', TOOLS.ffmpeg], ['ffprobe', TOOLS.ffprobe], ['dovi_tool', TOOLS.dovi_tool],
+].map(([n,v]) => `<span class="chip ${v?'ok':'no'}">${n} ${v?'✓':'missing'}</span>`).join('')
+ + (TOOLS.dovi_tool ? '' : '<span class="chip no">Dolby Vision will be lost — install dovi_tool</span>');
+
+const drop = $('#drop');
+['dragenter','dragover'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add('hot')}));
+['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove('hot')}));
+drop.addEventListener('drop', ev => {
+  const f = ev.dataTransfer.files[0];
+  if (f) { $('#path').value = f.path || f.name; scan(); }
+});
+drop.onclick = () => $('#path').focus();
+$('#scan').onclick = scan;
+$('#path').addEventListener('keydown', e => { if (e.key === 'Enter') scan(); });
+
+async function scan() {
+  const p = $('#path').value.trim().replace(/^"|"$/g,'');
+  if (!p) return;
+  $('#result').className = 'card';
+  $('#result').innerHTML = '<b>Scanning…</b>';
+  const r = await fetch('/api/probe?path=' + encodeURIComponent(p)).then(r=>r.json());
+  if (r.error) { $('#result').innerHTML = `<div class="banner b-warn">${esc(r.error)}</div>`; return; }
+  cur = { path: p, ...r };
+  render();
+}
+
+function render() {
+  const { src, dx, plan: pl, tool } = cur;
+  const o = pl.output, asIs = pl.asIs || {};
+  const bad = dx.criticalCount + (src.vfr ? 1 : 0);
+  const fmt = src.hdrFormat === 'dolbyvision' ? 'Dolby Vision 8.4'
+            : src.hdrFormat === 'hlg' ? 'HLG HDR' : src.hdr ? 'HDR' : 'SDR';
+
+  const rows = [];
+  const row = (s,l,v,n) => `<div class="row ${s}"><i>${s==='ok'?'✓':s==='warn'?'!':'✗'}</i>
+    <span>${esc(l)}</span><span>${esc(v)}</span>${n?`<div class="n">${esc(n)}</div>`:''}</div>`;
+
+  rows.push(row(src.width>1080?'warn':'ok','Resolution',
+    `${src.width}×${src.height}${(o.width!==src.width)?` → ${o.width}×${o.height}`:''}`,
+    o.width!==src.width ? 'Downscaled here with Lanczos instead of by the platform.' : null));
+  rows.push(row(src.vfr?'bad':'ok','Frame rate', `${src.fps} fps ${src.vfr?'VFR':'CFR'}`,
+    src.vfr ? 'Variable frame rate — will be locked to CFR at the same rate.' : 'Preserved exactly.'));
+  rows.push(row('ok','Codec', `${src.codec} ${src.bitDepth}-bit`));
+  rows.push(row(src.hdr?'ok':'warn','Colour', fmt, `${src.colorPrimaries}/${src.colorTransfer}`));
+  rows.push(row('ok','Bitrate', `${src.bitrateMbps} → ${o.targetMbps} Mbps`));
+  for (const f of dx.findings) if (f.severity !== 'ok')
+    rows.push(row(f.severity==='critical'?'bad':'warn', f.title, '', f.symptom + ' — ' + f.fix));
+
+  const dvWarn = src.hasDolbyVisionRPU && !TOOLS.dovi_tool;
+
+  $('#result').className = 'card';
+  $('#result').innerHTML = `
+    <div class="banner ${bad?'b-warn':'b-best'}">
+      ${bad ? `${bad} issue${bad>1?'s':''} to fix` : `★ ${fmt} · ${src.fps}fps · ready`}
+    </div>
+    ${tool ? `<div class="banner b-info">🔍 ${esc(tool.likely)}<br><span class="sub">${esc(tool.advice)}</span></div>`:''}
+    ${dvWarn ? `<div class="banner b-warn">dovi_tool not installed — Dolby Vision will be dropped (HLG base survives).</div>`:''}
+    <div class="grid" style="margin-bottom:11px">
+      <div class="stat"><small>Output</small><b>${o.width}×${o.height} @ ${o.fps}fps</b></div>
+      <div class="stat"><small>Target</small><b>${o.targetMbps} Mbps · ~${o.estimatedSizeMB} MB</b></div>
+    </div>
+    ${rows.join('')}
+    <div style="margin-top:12px">
+      <label class="opt"><input type="checkbox" id="keep4k"><div><b>Keep 4K</b>
+        <span>Don't downscale. TikTok will downscale it instead — usually worse.</span></div></label>
+      <label class="opt"><input type="checkbox" id="sdr"><div><b>Force SDR</b>
+        <span>Tonemap to SDR with BT.2390 even though HDR is possible.</span></div></label>
+      <label class="opt"><input type="checkbox" id="patch"><div><b>Duration patch (experimental)</b>
+        <span>Zeroes header duration to soften platform compression. Players show 0:00. May stop working.</span></div></label>
+    </div>
+    <div class="grid" style="margin-top:10px">
+      <button class="g" id="go">Optimize${src.hdr?' — keep '+esc(fmt.split(' ')[0]):''}</button>
+      <button class="w" id="remux">Lossless remux only</button>
+    </div>`;
+
+  $('#go').onclick    = () => start('encode');
+  $('#remux').onclick = () => start('remux');
+}
+
+async function start(mode) {
+  const body = { path: cur.path, mode, platform: 'tiktok',
+    keep4k: $('#keep4k')?.checked, forceSdr: $('#sdr')?.checked, patch: $('#patch')?.checked };
+  const r = await fetch('/api/start', { method:'POST', body: JSON.stringify(body) }).then(r=>r.json());
+  if (r.error) return alert(r.error);
+  $('#progress').className = 'card';
+  $('#result').className = 'card hide';
+  poll(r.id);
+}
+
+async function poll(id) {
+  const j = await fetch('/api/job?id=' + id).then(r=>r.json());
+  $('#stage').textContent = j.stage || 'Working…';
+  $('#fill').style.width = (j.pct||0) + '%';
+  $('#pct').textContent = (j.pct||0) + '%';
+  $('#speed').textContent = j.speed ? '· ' + j.speed : '';
+  $('#log').textContent = (j.log||[]).join('\n');
+  if (j.state === 'running' || j.state === 'queued') return setTimeout(()=>poll(id), 700);
+
+  const ok = j.state === 'done';
+  $('#stage').textContent = ok ? '✓ ' + j.message : '✗ ' + j.message;
+  $('#fill').style.background = ok ? 'var(--green)' : 'var(--red)';
+  if (ok && j.result) {
+    const r = j.result;
+    $('#progress').insertAdjacentHTML('beforeend',
+      `<div class="banner b-best" style="margin-top:11px">
+         ${r.width}×${r.height} @ ${r.fps}fps · ${r.codec} ${r.bitDepth}-bit ·
+         ${r.hdr ? (r.hdrFormat||'HDR').toUpperCase() : 'SDR'}
+       </div>
+       <button class="w" onclick="fetch('/api/reveal?path='+encodeURIComponent('${j.out.replace(/\\/g,'\\\\')}'))">
+         Show file in folder</button>`);
+  }
+}
+</script></body></html>

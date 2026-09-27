@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Vague
+Comment=Local video optimizer for TikTok / Instagram
+Exec=sh -c "cd %k/.. && node app.js"
+Terminal=true
+Categories=AudioVideo;Video;

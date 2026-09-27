@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vague Nova — corrected copy preview</title>
+<style>
+  :root{
+    --ink:#161310;
+    --cream:#fdf6e9;
+    --mint:#d6f2e4;
+    --mint-d:#bfe9d4;
+    --amber:#ffd75e;
+    --amber-d:#f7c53d;
+    --peach:#ffe9d0;
+    --cyan:#5fd8e8;
+    --pink:#ff7a9c;
+    --green:#3fbf6f;
+    --red:#e5484d;
+    --sh:4px 4px 0 var(--ink);
+    --sh-lg:6px 6px 0 var(--ink);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;padding:26px 14px 60px;
+    background:
+      radial-gradient(900px 420px at 15% -10%, #ffe9d0 0%, transparent 60%),
+      radial-gradient(800px 400px at 95% 8%, #d9f0ff 0%, transparent 55%),
+      var(--cream);
+    color:var(--ink);
+    font-family:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    font-weight:700;
+    min-height:100vh;
+  }
+  .wrap{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+  .card{
+    background:#fff;border:2.5px solid var(--ink);border-radius:18px;
+    box-shadow:var(--sh-lg);padding:18px;
+  }
+  .topbar{
+    display:flex;align-items:center;gap:12px;
+    background:#fff;border:2.5px solid var(--ink);border-radius:18px;
+    box-shadow:var(--sh-lg);padding:12px 14px;
+  }
+  .logo{width:42px;height:42px;border-radius:12px;border:2.5px solid var(--ink);
+    background:linear-gradient(140deg,var(--amber),#ffb03a);display:grid;place-items:center;flex:none}
+  .logo svg{width:24px;height:24px}
+  .brand{line-height:1}
+  .brand b{display:block;font-size:20px;letter-spacing:-.5px;font-weight:900;
+    font-family:"Bangers",Impact,"Haettenschweiler",sans-serif;letter-spacing:1px}
+  .brand span{font-size:9.5px;letter-spacing:2.5px;opacity:.65;font-weight:800}
+  .lang{margin-left:auto;display:flex;border:2.5px solid var(--ink);border-radius:999px;overflow:hidden;box-shadow:2px 2px 0 var(--ink)}
+  .lang b{padding:6px 12px;font-size:12px;font-weight:900;background:#fff}
+  .lang b.on{background:var(--amber)}
+
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:900;
+    letter-spacing:1.6px;text-transform:uppercase}
+  .dot{width:20px;height:9px;border-radius:99px;background:var(--pink);border:2px solid var(--ink)}
+  h1{font-family:"Bangers",Impact,sans-serif;font-size:40px;letter-spacing:.5px;
+    margin:10px 0 4px;line-height:.95;text-transform:uppercase}
+  .sub{margin:0 0 16px;font-size:13.5px;font-weight:700;opacity:.8}
+  .sub mark{background:var(--amber);padding:1px 6px;border-radius:6px;border:2px solid var(--ink);font-weight:900}
+
+  .methods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px}
+  .m{position:relative;border:2.5px solid var(--ink);border-radius:14px;background:#fff;
+    padding:12px 6px;text-align:center;box-shadow:var(--sh);cursor:pointer;transition:.12s}
+  .m:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+  .m i{display:grid;place-items:center;width:30px;height:30px;margin:0 auto 6px;
+    border:2.5px solid var(--ink);border-radius:9px;font-style:normal;font-size:15px}
+  .m b{font-family:"Bangers",Impact,sans-serif;font-size:17px;letter-spacing:.8px;text-transform:uppercase}
+  .m.on{background:var(--amber)}
+  .m .tag{position:absolute;top:-11px;right:-8px;background:var(--green);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;font-size:9px;font-weight:900;
+    padding:2px 8px;letter-spacing:.8px}
+
+  .active-box{background:var(--mint);border:2.5px solid var(--ink);border-radius:16px;
+    padding:15px;box-shadow:var(--sh);margin-bottom:14px}
+  .row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+  .pill{border:2.5px solid var(--ink);border-radius:999px;font-size:10px;font-weight:900;
+    padding:3px 10px;letter-spacing:.7px;text-transform:uppercase;background:#fff}
+  .pill.prem{background:var(--pink);color:#fff}
+  .pill.cost{background:var(--cyan)}
+  .pill.beta{background:#c9b8ff}
+  .kick{font-size:10.5px;font-weight:900;letter-spacing:1.6px;opacity:.6;margin-right:auto}
+  .active-box h3{font-family:"Bangers",Impact,sans-serif;font-size:23px;letter-spacing:.6px;margin:2px 0 7px}
+  .active-box p{margin:0;font-size:13px;line-height:1.55;font-weight:700}
+  .active-box p + p{margin-top:8px}
+  .hl{background:var(--amber);padding:1px 5px;border-radius:5px;border:1.5px solid var(--ink);font-weight:900;white-space:nowrap}
+
+  .warn{border:2.5px solid var(--ink);border-radius:14px;padding:13px;box-shadow:var(--sh);margin-bottom:12px}
+  .warn.a{background:#ffe3e3}
+  .warn.b{background:var(--peach)}
+  .warn .wh{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:900;
+    letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
+  .warn p{margin:0;font-size:12.3px;line-height:1.5;font-weight:700}
+  .warn .save{display:block;margin-top:8px;background:#fff;border:2.5px solid var(--ink);
+    border-radius:10px;padding:8px 10px;font-size:12px;font-weight:900}
+
+  .btn{display:block;width:100%;border:2.5px solid var(--ink);border-radius:14px;
+    padding:13px;font-size:14.5px;font-weight:900;cursor:pointer;box-shadow:var(--sh);
+    background:var(--amber);font-family:inherit;transition:.12s;text-align:center;letter-spacing:.3px}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+  .btn.ghost{background:#fff;margin-top:9px}
+
+  .wallet h4{font-family:"Bangers",Impact,sans-serif;font-size:21px;letter-spacing:.6px;margin:3px 0 12px}
+  .stats{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:9px;margin-bottom:13px}
+  .st{border:2.5px solid var(--ink);border-radius:13px;padding:11px 9px;box-shadow:var(--sh);background:#fff}
+  .st.hero{background:var(--cyan)}
+  .st small{display:block;font-size:9.5px;font-weight:900;letter-spacing:.9px;text-transform:uppercase;opacity:.7}
+  .st b{display:block;font-size:26px;line-height:1.1;margin-top:3px;font-family:"Bangers",Impact,sans-serif}
+  .st em{font-style:normal;font-size:10px;font-weight:800;opacity:.7}
+
+  .ledger{border:2.5px solid var(--ink);border-radius:13px;overflow:hidden;box-shadow:var(--sh)}
+  .ledger .lh{background:var(--ink);color:var(--cream);font-size:10px;font-weight:900;
+    letter-spacing:1.4px;text-transform:uppercase;padding:7px 11px}
+  .le{display:flex;align-items:center;gap:10px;padding:10px 11px;background:#fff;
+    border-top:2px solid var(--ink);font-size:12.5px;font-weight:800}
+  .le:first-of-type{border-top:0}
+  .amt{font-family:"Bangers",Impact,sans-serif;font-size:16px;min-width:38px;letter-spacing:.5px}
+  .amt.neg{color:var(--red)}
+  .amt.pos{color:#1f9d55}
+  .le .when{margin-left:auto;font-size:10.5px;opacity:.6;font-weight:800;white-space:nowrap}
+  .le.refund{background:#eafaf0}
+
+  .note{font-size:11.5px;font-weight:800;opacity:.75;text-align:center;line-height:1.5;margin:0}
+
+  .diffbar{background:var(--ink);color:var(--cream);border-radius:14px;padding:13px 15px;
+    font-size:11.5px;font-weight:800;line-height:1.6}
+  .diffbar b{color:var(--amber);font-weight:900}
+  .diffbar s{opacity:.55}
+  .legend{display:flex;gap:8px;align-items:center;font-size:10px;font-weight:900;
+    letter-spacing:1.4px;text-transform:uppercase;opacity:.55;margin:4px 0 -6px}
+  .legend hr{flex:1;border:0;border-top:2px dashed rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="logo"><svg viewBox="0 0 24 24"><path d="M4 4h4.2l3.8 11 3.8-11H20l-6 16h-4L4 4Z" fill="#161310"/></svg></span>
+    <span class="brand"><b>VAGUE</b><span>TRANSCODE</span></span>
+    <span class="lang"><b>ID</b><b class="on">EN</b></span>
+  </div>
+
+  <div class="card">
+    <span class="eyebrow"><span class="dot"></span> Encode Video</span>
+    <h1>Transcode video.</h1>
+    <p class="sub">Choose the method you want to use. <mark>60fps in, 60fps out.</mark></p>
+
+    <div class="methods">
+      <div class="m"><i style="background:var(--cyan)">⚡</i><b>Pulse</b></div>
+      <div class="m"><i style="background:var(--pink)">🔥</i><b>Forge</b></div>
+      <div class="m on"><span class="tag">ACTIVE</span><i style="background:#fff">✦</i><b>Nova</b></div>
+    </div>
+
+    <div class="active-box">
+      <div class="row">
+        <span class="kick">ACTIVE</span>
+        <span class="pill prem">Premium</span>
+        <span class="pill cost">3 coins / encode</span>
+      </div>
+      <h3>Vague Nova</h3>
+      <p>GPU server encoding: faster on large files, and the only method that keeps
+         <span class="hl">10-bit HDR</span> (PQ / HLG, profile 8.4-compatible) instead of
+         flattening it to SDR.</p>
+      <p>Source frame rate preserved exactly — <span class="hl">60fps stays 60fps</span>.</p>
+    </div>
+
+    <div class="legend">Shown before coins are spent <hr></div>
+
+    <div class="warn a">
+      <div class="wh">⚠ HDR10+ can't be used on any social platform</div>
+      <p>We'll convert the HDR10 base layer to 10-bit profile 8.4 — wide gamut and
+         10-bit are kept, the per-scene HDR10+ metadata is lost. This is a limit of
+         the destination platform, not of Nova.</p>
+    </div>
+
+    <div class="warn b">
+      <div class="wh">⚠ This destination does not accept HDR</div>
+      <p>Your video will be tonemapped to SDR with the BT.2390 curve — a much better
+         result than the platform's automatic tonemap. To keep HDR, upload through the
+         Instagram app on iOS.</p>
+      <span class="save">💡 You don't need Nova for SDR output — Forge already handles this, free.</span>
+    </div>
+
+    <button class="btn">Encode with Nova · 3 coins</button>
+    <button class="btn ghost">Use Forge instead — free</button>
+  </div>
+
+  <div class="card wallet">
+    <div class="row">
+      <span class="kick">NOVA WALLET</span>
+      <span class="pill beta">Beta backend</span>
+    </div>
+    <h4>Nova usage</h4>
+
+    <div class="stats">
+      <div class="st hero"><small>Available coin</small><b>12</b><em>≈ 4 encodes</em></div>
+      <div class="st"><small>Encodes used</small><b>6</b><em>encodes</em></div>
+      <div class="st"><small>Top-ups</small><b>2</b><em>transactions</em></div>
+    </div>
+
+    <div class="ledger">
+      <div class="lh">Recent activity</div>
+      <div class="le"><span class="amt neg">−3</span> Reels HDR 1080p60 <span class="when">2 hrs ago</span></div>
+      <div class="le"><span class="amt pos">+15</span> Top-up <span class="when">3 days ago</span></div>
+      <div class="le refund"><span class="amt pos">+3</span> Refund — encode failed <span class="when">4 days ago</span></div>
+      <div class="le"><span class="amt neg">−3</span> TikTok 1080p60 SDR <span class="when">5 days ago</span></div>
+    </div>
+
+    <p class="note" style="margin-top:12px">
+      Coins are tied to your Nova key, not to this browser.<br>
+      Re-enter your key on any device to restore your balance.<br>
+      Failed or timed-out encodes are refunded automatically.
+    </p>
+  </div>
+
+  <div class="diffbar">
+    <b>WHAT CHANGED</b><br>
+    <s>"Dolby Vision support"</s> → "profile 8.4-compatible" &nbsp;·&nbsp; no trademark exposure<br>
+    <s>"HDR10+ support"</s> → dropped &nbsp;·&nbsp; no platform ingests it<br>
+    <s>"improved video and audio quality"</s> → removed &nbsp;·&nbsp; unprovable<br>
+    <s>"4K 120fps"</s> → "60fps in, 60fps out" &nbsp;·&nbsp; provable, and unique to you
+  </div>
+
+</div>
+</body>
+</html>

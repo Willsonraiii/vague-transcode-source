@@ -1,0 +1,115 @@
+:root{
+  --ink:#161310; --cream:#fdf6e9; --mint:#d6f2e4; --amber:#ffd75e;
+  --peach:#ffe9d0; --cyan:#5fd8e8; --pink:#ff7a9c; --green:#3fbf6f;
+  --red:#e5484d; --violet:#c9b8ff;
+  --sh:4px 4px 0 var(--ink); --sh-lg:6px 6px 0 var(--ink);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;padding:22px 14px 70px;
+  background:
+    radial-gradient(900px 420px at 15% -10%, #ffe9d0 0%, transparent 60%),
+    radial-gradient(800px 400px at 95% 8%, #d9f0ff 0%, transparent 55%),
+    var(--cream);
+  color:var(--ink);
+  font-family:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-weight:700;min-height:100vh;
+}
+.wrap{max-width:470px;margin:0 auto;display:flex;flex-direction:column;gap:15px}
+.display{font-family:"Bangers",Impact,"Haettenschweiler",sans-serif;letter-spacing:.8px;text-transform:uppercase}
+
+.card{background:#fff;border:2.5px solid var(--ink);border-radius:18px;box-shadow:var(--sh-lg);padding:18px}
+.topbar{display:flex;align-items:center;gap:12px;background:#fff;border:2.5px solid var(--ink);
+  border-radius:18px;box-shadow:var(--sh-lg);padding:11px 13px}
+.logo{width:40px;height:40px;border-radius:12px;border:2.5px solid var(--ink);
+  background:linear-gradient(140deg,var(--amber),#ffb03a);display:grid;place-items:center;flex:none}
+.logo svg{width:23px;height:23px}
+.brand b{display:block;font-size:19px;font-family:"Bangers",Impact,sans-serif;letter-spacing:1px}
+.brand span{font-size:9px;letter-spacing:2.4px;opacity:.65;font-weight:800}
+.lang{margin-left:auto;display:flex;border:2.5px solid var(--ink);border-radius:999px;overflow:hidden;box-shadow:2px 2px 0 var(--ink)}
+.lang b{padding:5px 11px;font-size:11.5px;font-weight:900;background:#fff;cursor:pointer}
+.lang b.on{background:var(--amber)}
+
+nav.tabs{display:flex;gap:8px}
+nav.tabs a{flex:1;text-align:center;text-decoration:none;color:var(--ink);
+  border:2.5px solid var(--ink);border-radius:13px;background:#fff;box-shadow:var(--sh);
+  padding:10px 4px;font-size:13px;font-weight:900;transition:.12s}
+nav.tabs a:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+nav.tabs a.on{background:var(--cyan)}
+
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase}
+.dot{width:19px;height:9px;border-radius:99px;background:var(--pink);border:2px solid var(--ink)}
+h1{font-family:"Bangers",Impact,sans-serif;font-size:38px;letter-spacing:.5px;margin:9px 0 4px;line-height:.95;text-transform:uppercase}
+h2.sec{font-family:"Bangers",Impact,sans-serif;font-size:24px;margin:2px 0 10px;letter-spacing:.6px;text-transform:uppercase}
+.sub{margin:0 0 15px;font-size:13.5px;font-weight:700;opacity:.82}
+mark{background:var(--amber);padding:1px 6px;border-radius:6px;border:2px solid var(--ink);font-weight:900}
+
+.methods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:13px}
+.m{position:relative;border:2.5px solid var(--ink);border-radius:14px;background:#fff;padding:12px 6px;
+  text-align:center;box-shadow:var(--sh);cursor:pointer;transition:.12s}
+.m:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.m i{display:grid;place-items:center;width:29px;height:29px;margin:0 auto 6px;border:2.5px solid var(--ink);border-radius:9px;font-style:normal;font-size:14px}
+.m b{font-family:"Bangers",Impact,sans-serif;font-size:16.5px;letter-spacing:.8px;text-transform:uppercase}
+.m.on{background:var(--amber)}
+.m .tag{position:absolute;top:-11px;right:-7px;background:var(--green);color:#fff;border:2.5px solid var(--ink);
+  border-radius:999px;font-size:8.5px;font-weight:900;padding:2px 7px;letter-spacing:.7px}
+
+.box{border:2.5px solid var(--ink);border-radius:16px;padding:15px;box-shadow:var(--sh);margin-bottom:13px}
+.box.mint{background:var(--mint)} .box.peach{background:var(--peach)}
+.box.rose{background:#ffe3e3} .box.white{background:#fff}
+.row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.pill{border:2.5px solid var(--ink);border-radius:999px;font-size:9.5px;font-weight:900;padding:3px 10px;
+  letter-spacing:.7px;text-transform:uppercase;background:#fff}
+.pill.prem{background:var(--pink);color:#fff} .pill.cost{background:var(--cyan)}
+.pill.beta{background:var(--violet)} .pill.free{background:var(--green);color:#fff}
+.kick{font-size:10px;font-weight:900;letter-spacing:1.6px;opacity:.6;margin-right:auto}
+.box h3{font-family:"Bangers",Impact,sans-serif;font-size:22px;letter-spacing:.6px;margin:2px 0 7px;text-transform:uppercase}
+.box p{margin:0;font-size:12.8px;line-height:1.55;font-weight:700}
+.box p+p{margin-top:8px}
+.hl{background:var(--amber);padding:1px 5px;border-radius:5px;border:1.5px solid var(--ink);font-weight:900;white-space:nowrap}
+
+.wh{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;margin-bottom:6px}
+.save{display:block;margin-top:9px;background:#fff;border:2.5px solid var(--ink);border-radius:10px;padding:8px 10px;font-size:11.8px;font-weight:900}
+
+.btn{display:block;width:100%;border:2.5px solid var(--ink);border-radius:14px;padding:13px;font-size:14.5px;
+  font-weight:900;cursor:pointer;box-shadow:var(--sh);background:var(--amber);font-family:inherit;transition:.12s;text-align:center;text-decoration:none;color:var(--ink)}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.btn.ghost{background:#fff;margin-top:9px} .btn.cyan{background:var(--cyan)}
+
+.drop{border:3px dashed var(--ink);border-radius:16px;padding:26px 14px;text-align:center;background:#fffdf6;cursor:pointer;margin-bottom:12px}
+.drop .plus{width:42px;height:42px;margin:0 auto 8px;border:2.5px solid var(--ink);border-radius:50%;
+  background:var(--cyan);display:grid;place-items:center;font-size:24px;font-weight:900;line-height:1}
+.drop b{display:block;font-size:15px}
+.drop small{font-size:11px;opacity:.7;font-weight:800;letter-spacing:.6px}
+
+.stats{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:9px;margin-bottom:13px}
+.st{border:2.5px solid var(--ink);border-radius:13px;padding:11px 9px;box-shadow:var(--sh);background:#fff}
+.st.hero{background:var(--cyan)}
+.st small{display:block;font-size:9px;font-weight:900;letter-spacing:.9px;text-transform:uppercase;opacity:.7}
+.st b{display:block;font-size:25px;line-height:1.1;margin-top:3px;font-family:"Bangers",Impact,sans-serif}
+.st em{font-style:normal;font-size:9.5px;font-weight:800;opacity:.7}
+
+.ledger{border:2.5px solid var(--ink);border-radius:13px;overflow:hidden;box-shadow:var(--sh)}
+.ledger .lh{background:var(--ink);color:var(--cream);font-size:9.5px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;padding:7px 11px}
+.le{display:flex;align-items:center;gap:10px;padding:10px 11px;background:#fff;border-top:2px solid var(--ink);font-size:12.3px;font-weight:800}
+.le:first-of-type{border-top:0}
+.amt{font-family:"Bangers",Impact,sans-serif;font-size:16px;min-width:36px;letter-spacing:.5px}
+.amt.neg{color:var(--red)} .amt.pos{color:#1f9d55}
+.le .when{margin-left:auto;font-size:10px;opacity:.6;font-weight:800;white-space:nowrap}
+.le.refund{background:#eafaf0}
+
+.note{font-size:11.3px;font-weight:800;opacity:.75;text-align:center;line-height:1.55;margin:12px 0 0}
+.inp{width:100%;border:2.5px solid var(--ink);border-radius:13px;padding:13px;font-size:14px;font-weight:800;
+  font-family:inherit;box-shadow:inset 2px 2px 0 rgba(0,0,0,.07);background:#fffdf6}
+.inp::placeholder{opacity:.4}
+
+table.diff{width:100%;border-collapse:collapse;border:2.5px solid var(--ink);border-radius:12px;overflow:hidden;box-shadow:var(--sh)}
+table.diff th{background:var(--ink);color:var(--cream);font-size:9.5px;letter-spacing:1px;text-transform:uppercase;padding:7px 8px;text-align:left}
+table.diff td{padding:8px;border-top:2px solid var(--ink);font-size:11.8px;font-weight:800;background:#fff}
+table.diff tr.win td{background:#eafaf0}
+.ok{color:#1f9d55;font-weight:900} .bad{color:var(--red);font-weight:900}
+
+.dark{background:var(--ink);color:var(--cream);border-radius:15px;padding:14px 16px;font-size:11.5px;font-weight:800;line-height:1.65}
+.dark b{color:var(--amber);font-weight:900}
+.dark s{opacity:.5}
+footer{text-align:center;font-size:10.5px;font-weight:800;opacity:.6;line-height:1.7;padding-top:6px}

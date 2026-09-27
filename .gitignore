@@ -1,0 +1,8 @@
+node_modules/
+package-lock.json
+.cache/
+*.log
+test/*-vague.mp4
+test/*-faststart.mp4
+test/*-patched.mp4
+test/f_remuxed.mp4

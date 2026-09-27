@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Vague Nova — corrected preview</title>
+<link rel="stylesheet" href="style.css"/>
+</head><body><div class="wrap">
+
+<div class="topbar">
+  <span class="logo"><svg viewBox="0 0 24 24"><path d="M4 4h4.2l3.8 11 3.8-11H20l-6 16h-4L4 4Z" fill="#161310"/></svg></span>
+  <span class="brand"><b>VAGUE</b><span>TRANSCODE</span></span>
+  <span class="lang"><b>ID</b><b class="on">EN</b></span>
+</div>
+
+<nav class="tabs">
+  <a href="index.html">Encode</a>
+  <a href="nova.html" class="on">Nova</a>
+  <a href="checker.html">Checker</a>
+</nav>
+
+<div class="card">
+  <span class="eyebrow"><span class="dot"></span> Encode Video</span>
+  <h1>Transcode video.</h1>
+  <p class="sub">Choose the method you want to use. <mark>60fps in, 60fps out.</mark></p>
+
+  <div class="methods">
+    <div class="m"><i style="background:var(--cyan)">⚡</i><b>Pulse</b></div>
+    <div class="m"><i style="background:var(--pink)">🔥</i><b>Forge</b></div>
+    <div class="m on"><span class="tag">ACTIVE</span><i style="background:#fff">✦</i><b>Nova</b></div>
+  </div>
+
+  <div class="box mint">
+    <div class="row">
+      <span class="kick">ACTIVE</span>
+      <span class="pill prem">Premium</span>
+      <span class="pill cost">3 coins / encode</span>
+    </div>
+    <h3>Vague Nova</h3>
+    <p>GPU server encoding: faster on large files, and the only method that keeps
+       <span class="hl">10-bit HDR</span> (PQ / HLG, profile 8.4-compatible) instead of flattening it to SDR.</p>
+    <p>Source frame rate preserved exactly — <span class="hl">60fps stays 60fps</span>.</p>
+  </div>
+
+  <div style="display:flex;gap:8px;align-items:center;font-size:9.5px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;opacity:.55;margin:2px 0 9px">
+    Shown before coins are spent <hr style="flex:1;border:0;border-top:2px dashed rgba(0,0,0,.25)">
+  </div>
+
+  <div class="box rose">
+    <div class="wh">⚠ HDR10+ can't be used on any social platform</div>
+    <p>We'll convert the HDR10 base layer to 10-bit profile 8.4 — wide gamut and 10-bit
+       are kept, the per-scene HDR10+ metadata is lost. This is a limit of the
+       destination platform, not of Nova.</p>
+  </div>
+
+  <div class="box peach">
+    <div class="wh">⚠ This destination does not accept HDR</div>
+    <p>Your video will be tonemapped to SDR with the BT.2390 curve — a much better
+       result than the platform's automatic tonemap. To keep HDR, upload through the
+       Instagram app on iOS.</p>
+    <span class="save">💡 You don't need Nova for SDR output — Forge already handles this, free.</span>
+  </div>
+
+  <button class="btn">Encode with Nova · 3 coins</button>
+  <a class="btn ghost" href="index.html">Use Forge instead — free</a>
+</div>
+
+<div class="card">
+  <div class="row"><span class="kick">NOVA ACCESS</span><span class="pill beta">Beta backend</span></div>
+  <h2 class="sec">Enter your Nova key</h2>
+  <p class="sub" style="margin-bottom:11px">Your key comes from the WhatsApp bot and is verified by the server.</p>
+  <input class="inp" placeholder="NOVA-XXXXX-XXXXX-XXXXX" style="margin-bottom:9px"/>
+  <button class="btn cyan">Activate key</button>
+  <p class="note" style="margin-top:10px">
+    Coins are tied to your key, not to this browser.<br>
+    Re-enter it on any device to restore your balance.
+  </p>
+</div>
+
+<div class="card">
+  <div class="row"><span class="kick">NOVA WALLET</span><span class="pill">Active</span></div>
+  <h2 class="sec">Nova usage</h2>
+
+  <div class="stats">
+    <div class="st hero"><small>Available coin</small><b>12</b><em>≈ 4 encodes</em></div>
+    <div class="st"><small>Encodes used</small><b>6</b><em>encodes</em></div>
+    <div class="st"><small>Top-ups</small><b>2</b><em>transactions</em></div>
+  </div>
+
+  <div class="ledger">
+    <div class="lh">Recent activity</div>
+    <div class="le"><span class="amt neg">−3</span> Reels HDR 1080p60 <span class="when">2 hrs ago</span></div>
+    <div class="le"><span class="amt pos">+15</span> Top-up <span class="when">3 days ago</span></div>
+    <div class="le refund"><span class="amt pos">+3</span> Refund — encode failed <span class="when">4 days ago</span></div>
+    <div class="le"><span class="amt neg">−3</span> TikTok 1080p60 SDR <span class="when">5 days ago</span></div>
+  </div>
+
+  <p class="note">Failed or timed-out encodes are refunded automatically.</p>
+</div>
+
+<div class="dark">
+  <b>SECURITY MODEL BEHIND THIS SCREEN</b><br>
+  Hold → settle/release, atomic in one transaction<br>
+  <b>/release</b> rejects any job in state <b>delivered</b> — no double-dip<br>
+  <b>SELECT … FOR UPDATE</b> on the coin hold — 3 coins can't buy 10 encodes<br>
+  Sweeper refunds stuck jobs after 30 min, automatically
+</div>
+
+<footer>Preview build · not the live site<br>vague-hd/preview</footer>
+</div></body></html>

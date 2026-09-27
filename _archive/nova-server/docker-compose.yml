@@ -1,0 +1,40 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes: [redisdata:/data]
+
+  # CPU worker — handles Dolby Vision / HDR10+ (NVENC cannot carry RPU)
+  worker-cpu:
+    build: ./worker
+    restart: unless-stopped
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: ${DATABASE_URL}
+      R2_ENDPOINT: ${R2_ENDPOINT}
+      R2_BUCKET: ${R2_BUCKET}
+      R2_KEY: ${R2_KEY}
+      R2_SECRET: ${R2_SECRET}
+      NOVA_GPU: "0"
+    depends_on: [redis]
+    deploy:
+      resources: { limits: { cpus: '6', memory: 8G } }
+
+  # GPU worker — SDR/HLG fast path. Enable only when queue depth justifies it.
+  worker-gpu:
+    build: ./worker
+    restart: unless-stopped
+    profiles: ["gpu"]
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: ${DATABASE_URL}
+      R2_ENDPOINT: ${R2_ENDPOINT}
+      R2_BUCKET: ${R2_BUCKET}
+      R2_KEY: ${R2_KEY}
+      R2_SECRET: ${R2_SECRET}
+      NOVA_GPU: "1"
+    depends_on: [redis]
+    gpus: all
+
+volumes:
+  redisdata:
