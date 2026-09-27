@@ -585,6 +585,14 @@ Remaining:
    (c) method off, control. Compare fps/HDR/HEVC with "Did it survive?".
    First real measurement of the timescale patch AND the Studio-flip route.
 
+6b. **Nova premium diff play (owner is exploring it).** When a Nova output
+   file exists: drop the ORIGINAL into "Did it survive?" slot 1 and Nova's
+   OUTPUT into slot 2 — the compare table diffs their exact container changes
+   (declared fps row reveals a timescale patch; colour/DV rows reveal
+   strip-or-keep; edit-list/brand rows reveal the rest). Adopt anything they
+   do that we don't. Their free tier offers nothing we lack (server upload,
+   gated guides, SDR-only browser mode).
+
 6. **Measure the Nova example post** — https://vt.tiktok.com/ZSbdQVqav/
    ("latest method"). Download it and run the compare tool: what resolution,
    fps and colour does it actually deliver? Our audit of their claims is in
