@@ -88,6 +88,37 @@ timing so the media is valid.
 `--patch-aggressive` still exists (zeroes all three) purely for experimentation.
 It is known to break uploads.
 
+### 2.3b The patch and HDR are mutually exclusive ⭐⭐
+
+**Tested by the owner, and the most precise finding in the project.**
+
+Upload a duration-patched HDR file to TikTok:
+
+- In the app it does **not render as HDR**
+- But download that same post back with a third-party downloader, and the file
+  **is HDR in the gallery**
+
+So the HDR data survives TikTok's pipeline completely. What fails is
+**playback**: the TikTok player will not switch into HDR mode for a file whose
+movie-header duration reads 00:00. HDR playback needs valid duration metadata.
+
+**Consequences:**
+
+| Content | Duration patch |
+|---|---|
+| HDR | ❌ never — you lose HDR rendering |
+| SDR | ✅ fine |
+
+All three surfaces now refuse the patch on HDR files (CLI exits unless
+`--force-patch`; the website disables the checkbox; the extension hides it).
+
+This also proves the patch genuinely changes TikTok's behaviour — it is not
+placebo. It is simply incompatible with HDR.
+
+**Method note worth copying:** the owner distinguished "did the data survive"
+from "does the player render it" by downloading the post back. Those look
+identical from inside the app. Always check the delivered file, not the screen.
+
 ### 2.4 The Files-vs-gallery finding ⭐
 
 **In the TikTok app, attach the video via "Files", never from the gallery.**
@@ -329,14 +360,16 @@ https://willsonraiii.github.io/vague-transcode/
 
 Remaining:
 
-1. **No delivered upload has ever been measured.** ⭐ Highest-value next action.
-   The compare tool ("Did it survive?") has never been run on a real post.
-   Post → download it back → drop it in → read the frame-rate and colour rows.
-   Everything else is theory until this happens once.
+1. ✅ **PARTLY DONE** — the owner posted a patched HDR file, downloaded it back,
+   and found the HDR intact in the file but not rendered in the app. See §2.3b.
+   Still unmeasured: an **unpatched** HDR upload. Does it render as HDR in the
+   app? That is now the single most useful test.
 
-2. **Patched file via phone + Files is untested.** Desktop Studio refused it.
-   The belief that the app path accepts it comes from a creator's report, not a
-   measurement.
+2. **Does stripping Dolby Vision break HDR?** It was briefly ON by default and
+   HDR stopped surviving. Now OFF everywhere. Two uploads — one with, one
+   without — would settle it. Note the previous assistant introduced this from a
+   misreading: the "HDR" tag on other people's videos describes what TikTok
+   *delivers*, not what they *uploaded*.
 
 3. **"TikTok's 4K downscaler is bad" is unverified.** It came from blog posts and
    was repeated by the previous assistant. If it turns out to be fine, the entire
