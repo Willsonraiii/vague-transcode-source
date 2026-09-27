@@ -85,6 +85,11 @@ if (out) {
   chk('still HEVC', out.includes(Buffer.from('hvc1')));
   const after = await page.locator('#results').innerText();
   chk('UI reports what it did', /Dolby Vision signalling removed|plain HDR/i.test(after));
+  chk('verification card rendered', await page.locator('#verify').count() > 0);
+  const vtxt = await page.locator('#verify').innerText().catch(() => '');
+  chk('verification proves byte-identity', /byte-identical/.test(vtxt));
+  chk('verification shows moov moved', /moov at front/.test(vtxt));
+  chk('verification shows DV removed', /plain HLG HDR/.test(vtxt));
   chk('upload checklist appeared', after.includes('upload it'));
   chk('HDR file routed to PHONE', /phone app/i.test(after));
 }
@@ -100,8 +105,13 @@ const dl2 = page.waitForEvent('download', { timeout: 30000 });
 await page.locator('#run').click();
 try { await dl2; chk('SDR + patch downloads', true); }
 catch (e) { chk('SDR + patch downloads', false, '  ' + e.message.split('\n')[0]); }
+await page.waitForTimeout(1500);
 const sdrText = await page.locator('#results').innerText();
 chk('SDR routed to DESKTOP', /TikTok Studio on desktop/i.test(sdrText));
+const vtxt2 = await page.locator('#verify').innerText().catch(() => '');
+chk('patch verified in output (0.00s — 1 tick)', /0\.00s — 1 tick/.test(vtxt2));
+chk('checklist warns gallery undoes the patch', /gallery/i.test(sdrText));
+chk('checklist offers the share-sheet route', /share sheet/i.test(sdrText));
 chk('no JS errors', errors.length === 0, errors.length ? '  ' + errors[0] : '');
 
 /* ------------------------------------------------- 5. compare mode works */

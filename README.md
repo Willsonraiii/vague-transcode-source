@@ -111,7 +111,7 @@ bash test/run-all.sh
 ```
 engine  17 · probe  34 · remux  12 · duration patch  13
 rebrand + edit lists  10 · strip Dolby Vision  11
-website  38 · extension  23        (real Chromium)
+website  45 · extension  23        (real Chromium)
 ```
 
 Browser suites need:

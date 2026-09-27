@@ -384,7 +384,9 @@ async function probeSource(file, tools) {
     if (PATCH) {
       say(`\n  ${C.y}${C.B}⚠ PATCHED FILE — one valid upload route only:${C.x}`);
       say(`  ${C.y}   1. move it to your phone losslessly (USB / Telegram as File / http.server)`);
-      say(`     2. TikTok app -> +  ->  "Files" / attach   (NOT the gallery)`);
+      say(`     2. pass the FILE itself: "Files"/browse picker if your app has one, or the iOS`);
+      say(`        share sheet (Files app -> Share -> TikTok). NOT the gallery — it re-encodes`);
+      say(`        and rebuilds the duration, which strips the patch`);
       say(`     3. do NOT use TikTok Studio on desktop — it will refuse the file${C.x}`);
       say(`  ${C.d}Showing 00:00 in your gallery is expected. That is the patch working.${C.x}`);
       if (src.hdr)

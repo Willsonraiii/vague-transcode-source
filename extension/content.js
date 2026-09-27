@@ -242,8 +242,9 @@
     if (!parseFailed && !probe?.hdr) btns.push(`<label class="vg-opt" style="background:#fff3d6">
       <input type="checkbox" id="vg-zero"> <b>Duration patch</b>
       <span>⚠ A patched file CANNOT be uploaded here — TikTok Studio on desktop refuses it.
-      Use it only if you will move the file to your phone and attach it via "Files" in the app.
-      Shows 00:00 everywhere, which is expected.</span></label>`);
+      Use it only if you will move the file to your phone and pass the file itself —
+      the Files picker if your app has one, or the iOS share sheet (Files app → Share → TikTok).
+      The gallery re-encodes it and rebuilds the duration. Shows 00:00, which is expected.</span></label>`);
     else if (!parseFailed) btns.push(`<div class="vg-opt" style="background:#fff3d6;opacity:.65">
       <b>Duration patch — not for HDR files</b>
       <span>⚠ Tested: a patched HDR file does not render as HDR in TikTok's player (the data

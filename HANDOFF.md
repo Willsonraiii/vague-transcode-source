@@ -132,13 +132,28 @@ placebo. It is simply incompatible with HDR.
 from "does the player render it" by downloading the post back. Those look
 identical from inside the app. Always check the delivered file, not the screen.
 
-### 2.4 The Files-vs-gallery finding ⭐
+### 2.4 The Files-vs-gallery finding ⭐ — **UI contradicted, Sept 2026**
 
-**In the TikTok app, attach the video via "Files", never from the gallery.**
+Original finding: attach the video via "Files", never from the gallery — the
+photo library hands TikTok a re-encoded derivative (often 30 fps, SDR, lower
+bitrate), while the Files picker passes the original bytes. RTXFury documents
+the same thing.
 
-Picking from the photo library makes the OS hand TikTok a re-encoded derivative
-— often 30 fps, SDR, lower bitrate. The Files picker passes the original bytes.
-RTXFury documents the same thing. This is free and is one of the biggest levers.
+**Update (owner, Sept 2026): the current TikTok app offers NO Files picker —
+gallery only.** The file route now exists only via the iOS share sheet
+(Files app → long-press → Share → TikTok), if at all. Consequences:
+
+- A duration-patched file uploaded through the gallery is pointless — the
+  gallery re-encode rebuilds the duration and strips the patch before TikTok
+  ever sees it. This is the likely explanation for "the site downloaded
+  quickly and the patch didn't stick": the patch **did** apply (byte-verified:
+  `mvhd` = 1 tick in the output), the upload route undid it.
+- What the gallery route does to HDR is **unmeasured** (§8.5).
+
+All three surfaces now phrase the guidance as: pass the file itself (Files
+picker if your app has one, otherwise the iOS share sheet); never present the
+gallery as a working route for patched files; and verify whatever route you
+use with the compare tool.
 
 ### 2.5 Transfer damage
 
@@ -214,6 +229,16 @@ neutralisation and QuickTime rebranding.
 
 Both headline "4K 120fps", which describes the uploaded file, not what viewers
 receive. Don't copy that claim.
+
+**vague-infinity.com (Pulse / Forge / Nova)** — checked Sept 2026: Pulse, their
+browser mode, explicitly does **not** support HDR; Forge/Nova are server-GPU
+encodes. The "HDR10+ / Dolby Vision" premium claims are exactly the marketing
+our own audit (`_archive/nova-copy.md`) flagged: no platform ingests HDR10+
+dynamic metadata, and what genuinely survives is 10-bit PQ/HLG. Our remux
+already preserves PQ/HLG/DV 8.4 byte-for-byte — a server encode only adds
+re-encode capability (downscale, CFR lock), which our CLI does locally.
+Their example post ("latest method"): https://vt.tiktok.com/ZSbdQVqav/ —
+download it back and run the compare tool before treating it as the bar.
 
 ---
 
@@ -302,7 +327,7 @@ UNIT
   strip Dolby Vision     11 passed
 
 END-TO-END (real Chromium, via xvfb)
-  website                38 passed
+  website                45 passed
   extension              23 passed
 ```
 
@@ -369,7 +394,8 @@ Pattern: I reasoned from how systems *should* work. The owner tested how this on
    SDR file:  ./vague.sh clip.mp4 --remux-only --patch   (patch optional)
    or the website / extension — the same rules are enforced there
 4. Move back to the phone losslessly
-5. TikTok app → +  → "Files" / attach     ← NEVER the gallery
+5. Pass the FILE itself: Files picker if your app has one, else the
+   iOS share sheet (Files app → Share → TikTok). The gallery re-encodes
 6. "Allow high-quality uploads" ON · post public
 7. DO NOT edit after posting — no sounds, trims, filters
 8. Wait 30+ min · check on the phone, never desktop web
@@ -411,6 +437,16 @@ Remaining:
    resolution bucket edges, uploading AV1. A variant generator (one field changed
    per file, post them all, compare) was proposed but never built.
 
+5. **What does the gallery-only upload route actually deliver?** The app has
+   no Files picker (§2.4 update). Old claim: gallery = re-encoded 30fps SDR
+   derivative. Never measured on our account. One test clip posted via the
+   gallery + "Did it survive?" settles it.
+
+6. **Measure the Nova example post** — https://vt.tiktok.com/ZSbdQVqav/
+   ("latest method"). Download it and run the compare tool: what resolution,
+   fps and colour does it actually deliver? Our audit of their claims is in
+   `_archive/nova-copy.md`; a measurement beats the marketing either way.
+
 ---
 
 ## 10. Chronological log — what was tried, in order
@@ -437,6 +473,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 16 | Owner confirmed a paying creator's file shows **00:00 + HDR** and uploads via **Files/attach on the phone** → that's the complete paid method, and the desktop/patch incompatibility is explained. |
 | 17 | Installed real Chromium and wrote genuine end-to-end tests. Found two bugs — **both in the tests, not the product**. |
 | 18 | **Owner verified TikTok accepts 4K 60 fps (and has seen 120 fps served)** → engine limits raised (2160×3840, 120 fps, 4K HDR), all surfaces stop warning about 4K, CLI keeps 4K by default with `--1080p` as the optional downscale. Acceptance ≠ delivery: whether our account is *served* >1080p is still unmeasured. |
+| 19 | **Owner: the app has no Files picker (gallery only), and the site "downloads quickly without working/patching".** Byte-verification proved the patch DOES apply (`mvhd`=1 in the output) — the gallery route strips it after upload. Site rebuilt: new step-4 "Verified" card re-probes the output file and shows a before→after table (moov position, duration header, DV, edit list, branding, byte-identity); all upload guidance now matches gallery-only reality (share-sheet route + verify with compare tool). |
 
 ---
 
