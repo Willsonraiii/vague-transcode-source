@@ -235,6 +235,12 @@
       btns.push(`<button class="vg-fix vg-secondary" data-act="encode" ${hdrLock?'data-hdr="1"':''}>
         Re-encode first${hdrLock ? ' (loses HDR)' : ''}</button>`);
 
+    if (!parseFailed && probe?.fps > 48) btns.push(`<label class="vg-opt" style="background:#eef7ff">
+      <input type="checkbox" id="vg-method" checked> <b>60/120 fps method</b> (recommended)
+      <span>Divides the container timescale by ${probe.fps > 90 ? 4 : 2} so TikTok's encoder reads
+      ${Math.round(probe.fps / (probe.fps > 90 ? 4 : 2))} fps and decimates nothing — the full
+      ${probe.fps} fps frame count survives (the ut0ku/Zilem-style timescale patch). Lossless,
+      keeps real duration (no 00:00) and HDR. Local players may report the halved rate — expected.</span></label>`);
     if (!parseFailed && probe?.hasDolbyVisionRPU) btns.push(`<label class="vg-opt" style="background:#eaf6ff">
       <input type="checkbox" id="vg-nodv"> <b>Strip Dolby Vision</b> (off — testing only)
       <span>⚠ Leave OFF. HDR stopped surviving upload while this was on — TikTok may need the
@@ -279,10 +285,12 @@
     const orig = btn.textContent;
     try {
       const zero = !!panel.querySelector('#vg-zero')?.checked;
+      const meth = !!panel.querySelector('#vg-method')?.checked;
+      const div = meth ? (analysis.probe.fps > 90 ? 4 : analysis.probe.fps > 48 ? 2 : 0) : 0;
       const r = await faststartRemux(held.file,
         (pct, label) => { btn.textContent = `${label}… ${pct}%`; },
         { zeroDuration: zero, rebrand: true, stripEdits: true,
-          stripDV: !!panel.querySelector('#vg-nodv')?.checked });
+          stripDV: !!panel.querySelector('#vg-nodv')?.checked, fpsGuard: div });
       const name = held.file.name.replace(/\.[^.]+$/, '') + (zero ? '-patched.mp4' : '-faststart.mp4');
       release(r.blob, name);
       finish(btn, `✓ Lossless — ${(r.blob.size / 1048576).toFixed(1)} MB sent`);
@@ -294,6 +302,8 @@
       if (r.editsStripped) bits.push('edit list stripped');
       if (r.dvStripped && r.dvStripped.boxes) bits.push('delivered as plain HDR');
       if (r.durationZeroed) bits.push('duration patched');
+      if (r.fpsGuarded && (r.fpsGuarded.mvhd || r.fpsGuarded.mdhd))
+        bits.push(`frame-rate method ÷${r.fpsGuarded.divider} — ${Math.round(analysis.probe.fps / r.fpsGuarded.divider)} fps declared, ${analysis.probe.fps} fps samples intact`);
       v.textContent = `★ ${bits.join(' · ')}. ${analysis.probe.hdrFormat === 'dolbyvision' ? 'Dolby Vision' : 'Quality'} fully preserved.`;
     } catch (err) {
       btn.disabled = false; btn.textContent = orig;

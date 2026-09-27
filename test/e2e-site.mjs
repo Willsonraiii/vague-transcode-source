@@ -58,6 +58,8 @@ chk('detects Dolby Vision', text.includes('Dolby Vision'));
 chk('offers the plain-HDR option', await page.locator('#nodv').count() > 0);
 chk('plain-HDR is OFF by default (reverted — HANDOFF §8.2)', !(await page.locator('#nodv').isChecked()));
 chk('duration patch refused for HDR (§2.3b)', await page.locator('#patch').isDisabled());
+chk('60/120fps method offered (60fps file)', await page.locator('#method').count() > 0);
+chk('method pre-ticked (default on)', await page.locator('#method').isChecked());
 chk('raw probe present', text.toLowerCase().includes('raw probe'));
 await page.locator('#nodv').check();   // opt in, so the fix has something to do
 
@@ -90,6 +92,8 @@ if (out) {
   chk('verification proves byte-identity', /byte-identical/.test(vtxt));
   chk('verification shows moov moved', /moov at front/.test(vtxt));
   chk('verification shows DV removed', /plain HLG HDR/.test(vtxt));
+  chk('verification shows method applied (declared 30 fps)', /declares 30 fps \(method ÷2\)/.test(vtxt));
+  chk('output declared 30 fps — samples intact', /method ÷2/.test(vtxt));
   // the verify card is built async; wait for the checklist that follows it
   await page.waitForFunction(
     () => /upload it/i.test(document.querySelector('#results')?.innerText || ''),

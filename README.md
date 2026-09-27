@@ -38,6 +38,7 @@ container layout changes, so the file size is identical:
 | QuickTime → MP4 | `ftyp` major brand `qt  ` → `mp42` |
 | Edit lists | `edts` renamed to `free` so readers skip it |
 | Strip Dolby Vision | `dvcC` → `free` *(off by default — see HANDOFF)* |
+| Frame-rate method | `mvhd`+`mdhd` timescale ÷2/÷4 — TikTok's encoder decimates nothing *(the ut0ku/Zilem-style patch — default on for 60/120 fps, works on HDR)* |
 | Duration patch | `mvhd` duration → 1 tick, shows 00:00 *(opt-in · SDR only — refused on HDR input, HANDOFF §2.3b; keep out of iOS Photos — can crash the gallery)* |
 
 **Transcodes** (CLI only) — optional 4K → 1080p downscale (`--1080p`) while
@@ -109,9 +110,9 @@ bash test/run-all.sh
 ```
 
 ```
-engine  17 · probe  34 · remux  12 · duration patch  13
+engine  17 · probe  34 · remux  12 · duration patch  13 · frame-rate method  13
 rebrand + edit lists  10 · strip Dolby Vision  11
-website  45 · extension  23        (real Chromium)
+website  49 · extension  24        (real Chromium)
 ```
 
 Browser suites need:
@@ -131,7 +132,7 @@ sudo apt install -y xvfb libnspr4 libnss3 libasound2t64 libatk1.0-0t64 \
    (Sept 2026; HDR tags survived the download but in-app HDR playback is only
    expected on an UNPATCHED upload)
 2. Transfer to PC losslessly  (iPhone: Settings → Photos → Keep Originals, then USB)
-3. Fix the container  (website, extension, or ./vague.sh --remux-only)
+3. Fix the container  (website, extension, or ./vague.sh --remux-only --method)
 4. Move back to the phone losslessly
 5. TikTok app → +  →  "Files" / attach      ← never the gallery
 6. "Allow high-quality uploads" ON · post public

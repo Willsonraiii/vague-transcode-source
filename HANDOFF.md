@@ -84,7 +84,10 @@ run — see §8.2.
 This is what the paid services sell. Confirmed: a creator paying for a
 "paid method encode" has files that show **00:00** and display **HDR**.
 
-**What it is:** set the `mvhd` (movie header) duration to **1 tick**. Players,
+**What it is:** set the `mvhd` (movie header) duration to **1 tick**.
+(The *other* half of the paid method is the timescale patch — §2.9, now
+implemented. The duration patch is SDR-only and gallery-toxic; the timescale
+method is neither.) Players,
 galleries and file browsers all show `00:00`, but the track headers keep real
 timing so the media is valid.
 
@@ -273,6 +276,35 @@ re-encode capability (downscale, CFR lock), which our CLI does locally.
 Their example post ("latest method"): https://vt.tiktok.com/ZSbdQVqav/ —
 download it back and run the compare tool before treating it as the bar.
 
+### 2.9 The frame-rate method (timescale patch) ⭐⭐ — IMPLEMENTED 27 Sept 2026
+
+**This is the core of what the paid "methods" actually do**, found in the open:
+`github.com/ut0ku/120fps-method` (C++ reference patcher; Zilem's FAQ describes
+the same thing: "editing sample tables, edit lists, and timing metadata").
+
+**Algorithm (read from their code, mirrored exactly in our `remux.js`):**
+divide the timescale AND the duration of **every `mvhd` and every `mdhd`** by
+2 (60 fps source) or 4 (120 fps). Nothing else. Consequences:
+
+- Real-time duration (dur ÷ ts) is unchanged — **no 00:00, no gallery crash**
+- Byte widths unchanged → file size identical, offsets never move → lossless
+- Frame rate computed from headers now reads HALF (60 → 30 declared) while all
+  samples pass through — TikTok's encoder "finds 30 fps" and decimates nothing
+- Works on HDR (unlike the 1-tick duration patch, §2.3b) — creators run patched
+  HDR files and their posts deliver HDR in-feed (owner: verified visually)
+
+Owner context (Sept 2026): creators confirmed their uploaded files showed
+00:00 pre-upload — so paid tools combine BOTH tricks (timescale + duration);
+downloads of their posts still crash the owner's gallery, i.e. TikTok
+serves/stores those files with the degenerate structure intact.
+
+**Status: default-ON for >48 fps files on every surface** (`#method` /
+`#vg-method` / `--method`). Unit suite: `test/method-test.mjs` (13 checks:
+timescale halved, real duration preserved, declared fps 30, frame count
+intact, DV kept, byte-identical, works with moov-move).
+**Not yet owner-tested against TikTok** — the decisive post: one file with
+the method, one without.
+
 ---
 
 ## 3. Architecture
@@ -358,10 +390,11 @@ UNIT
   duration patch         13 passed
   rebrand + edit lists   10 passed
   strip Dolby Vision     11 passed
+  frame-rate method      13 passed
 
 END-TO-END (real Chromium, via xvfb)
-  website                45 passed
-  extension              23 passed
+  website                49 passed
+  extension              24 passed
 ```
 
 Run everything: `bash test/run-all.sh`
@@ -423,8 +456,9 @@ Pattern: I reasoned from how systems *should* work. The owner tested how this on
 1. Shoot/export 4K60 HDR or 1080p60 HDR — 4K60 delivery MEASURED on our
    account (Sept 2026: 4K60 DV upload → delivered back as 4K 60 HDR)
 2. Transfer to PC losslessly (iPhone: "Keep Originals" + USB)
-3. HDR file:  ./vague.sh clip.mp4 --remux-only        (keep DV, no patch)
-   SDR file:  ./vague.sh clip.mp4 --remux-only --patch   (patch optional)
+3. HDR file:  ./vague.sh clip.mp4 --remux-only --method   (60/120fps: timescale
+   patch, §2.9 — default on the site/extension for >48 fps; keep DV, no patch)
+   SDR file:  ./vague.sh clip.mp4 --remux-only --patch       (1-tick, optional)
    or the website / extension — the same rules are enforced there
 4. Move back to the phone losslessly
 5. Pass the FILE itself: Files picker if your app has one, else the
@@ -477,6 +511,10 @@ Remaining:
    derivative. Never measured on our account. One test clip posted via the
    gallery + "Did it survive?" settles it.
 
+7. **Method A/B against TikTok** — one file with the frame-rate method (§2.9),
+   one without, same clip, post both, compare with "Did it survive?". First
+   real measurement of the timescale patch on our own account.
+
 6. **Measure the Nova example post** — https://vt.tiktok.com/ZSbdQVqav/
    ("latest method"). Download it and run the compare tool: what resolution,
    fps and colour does it actually deliver? Our audit of their claims is in
@@ -512,7 +550,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 20 | **FIRST DELIVERY MEASUREMENT**: owner uploaded 4K60 Dolby Vision (patched) — app shows 4K 60 but no Dolby badge; the third-party download of the post reads **HDR 4K 60** in the gallery. TikTok delivers 4K60 HDR → §2.1/§2.6/§7/§8 updated, "shoot 1080p" advice retired, §2.3b signature reproduced. |
 | 21 | **Owner follow-up on the 4K60 test**: patched file crashed the phone gallery (Photos force-closes; patched files now live in Files, never Photos — §2.3). Creators' HDR posts badge + render slower in-app; ours played instantly with no badge → HDR pipeline was skipped; downloaded-post HDR tags = tag survival, not playback. §2.6 downgraded from "delivers 4K60 HDR" to "delivers 4K60; HDR tags ≠ HDR playback". |---
 | 22 | **Downloader echo discovered**: post downloads are mixed — some show 00:00 and won't play (our own patched upload, stored & served by TikTok), some play normally. "HDR 4K 60" tag readings on downloads are unreliable until the download plays with a normal duration. Compare tool now warns about this. Owner agreed to the decisive unpatched-HDR test (§8.1). |
-## 9. Standing preferences
+| 23 | **Found and implemented the actual paid method**: ut0ku/120fps-method (open source) — divide mvhd+mdhd timescale+duration by 2/4 so TikTok's encoder reads half the fps and decimates nothing. Lossless, real duration kept, HDR-safe. Default-on for >48fps on all surfaces (`--method`/`#method`/`#vg-method`); 13-check unit suite + browser e2e. Owner context: creators' uploads showed 00:00 (paid tools combine BOTH patches); their delivered posts still crash the gallery. |## 9. Standing preferences
 
 - Personal use — no monetisation advice
 - Wants real working software, not specs or mockups

@@ -91,6 +91,8 @@ chk('panel probed the file', /1080|60/.test(ptext));
 chk('detected Dolby Vision', /dolby vision/i.test(ptext));
 chk('offers plain-HDR option', await page.locator('#vg-nodv').count() > 0);
 chk('duration patch hidden for HDR (§2.3b)', (await page.locator('#vg-zero').count()) === 0);
+chk('60/120fps method offered + pre-ticked', (await page.locator('#vg-method').count()) > 0 &&
+    (await page.locator('#vg-method').isChecked()));
 chk('offers an action button', await page.locator('.vg-fix').count() > 0);
 
 console.log('\n── 5. Release sends the fixed file through ──');

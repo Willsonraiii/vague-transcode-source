@@ -13,6 +13,7 @@ run "node test/remux-test.mjs"       "remux"
 run "node test/bypass-test.mjs"      "duration patch"
 run "node test/rebrand-test.mjs"     "rebrand + edit lists"
 run "node test/stripdv-test.mjs"     "strip Dolby Vision"
+run "node test/method-test.mjs"      "frame-rate method"
 
 echo; echo "  END-TO-END (real Chromium)"
 if command -v xvfb-run >/dev/null && [ -d node_modules/playwright-core ]; then

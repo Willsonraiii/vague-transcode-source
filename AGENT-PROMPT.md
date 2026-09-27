@@ -44,7 +44,7 @@ testing. For example:
 |---|---|
 | "TikTok doesn't support HDR" | It does — app only |
 | "TikTok caps uploads/delivery at 1080p/60" | It accepts 4K and 120 fps, and DELIVERED a 4K60 upload back as 4K 60 (measured Sept 2026). HDR tags survived in the download, but in-app HDR playback never engaged on the patched upload — tags ≠ playback |
-| "There's no way around platform compression" | The duration patch is real and is what paid tools sell |
+| "There's no way around platform compression" | The frame-rate method (timescale ÷2/÷4 in mvhd+mdhd, §2.9) and the 1-tick duration patch are both real; the timescale method is the paid tools' core and is default-on for >48fps |
 | "Keep Dolby Vision, more metadata is better" | Unresolved — it may be breaking HDR. See §8 |
 | "Use ffmpeg.wasm to transcode in the browser" | Canvas is SDR-only; it destroys HDR |
 | "Set up a cloud transcode service" | Not needed and not wanted |

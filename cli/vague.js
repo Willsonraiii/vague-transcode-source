@@ -27,6 +27,11 @@
  *                       automatically on HDR input (HANDOFF §2.3b)
  *   --patch-aggressive  also zero track + media headers (BREAKS TikTok uploads)
  *   --force-patch       allow --patch on an HDR file anyway (experimental)
+ *   --method            the 60/120fps method: divide mvhd+mdhd timescale by 2
+ *                       (60fps) or 4 (120fps) so TikTok's encoder reads half
+ *                       the frame rate and decimates nothing. Lossless, keeps
+ *                       real duration (no 00:00) and works on HDR. This is the
+ *                       ut0ku/Zilem-style timescale patch, verified in the wild.
  *   --remux-only        lossless container fix, no re-encode
  *   --gpu               force hardware encoding (auto-detected by default)
  *   --cpu               never use hardware, always x265
@@ -72,6 +77,7 @@ const FORCE_SDR = flag('sdr');
 const PATCH_AGG = flag('patch-aggressive');
 const PATCH     = flag('patch') || PATCH_AGG;
 const FORCE_PATCH = flag('force-patch');
+const METHOD     = flag('method');
 const REMUX     = flag('remux-only');
 const GPU       = flag('gpu');
 const UPLOAD    = flag('upload');
@@ -380,7 +386,8 @@ async function probeSource(file, tools) {
     const r = await faststartRemux(fileLike, (pct, label) => {
       if (pct !== last) { process.stderr.write(`\r  ${label}… ${pct}%   `); last = pct; }
     }, { zeroDuration: PATCH ? (PATCH_AGG ? 'aggressive' : true) : false,
-         rebrand: true, stripEdits: true, stripDV: NO_DV });
+         rebrand: true, stripEdits: true, stripDV: NO_DV,
+         fpsGuard: METHOD && src.fps > 48 ? (src.fps > 90 ? 4 : 2) : 0 });
     if (PATCH) {
       say(`\n  ${C.y}${C.B}⚠ PATCHED FILE — one valid upload route only:${C.x}`);
       say(`  ${C.y}   1. move it to your phone losslessly (USB / Telegram as File / http.server)`);
@@ -397,7 +404,8 @@ async function probeSource(file, tools) {
     process.stderr.write('\n');
 
     const changed = r.moved || r.rebranded || r.editsStripped || r.durationZeroed ||
-                    (r.dvStripped && r.dvStripped.boxes);
+                    (r.dvStripped && r.dvStripped.boxes) ||
+                    (r.fpsGuarded && (r.fpsGuarded.mvhd || r.fpsGuarded.mdhd));
     if (!changed) {
       say(`\n  ${C.g}★ Nothing to change${C.x} — this file is already optimal.`);
       say(`  ${C.d}Upload ${input} as it is.${C.x}\n`);
@@ -406,6 +414,14 @@ async function probeSource(file, tools) {
     }
     fs.writeFileSync(outPath, Buffer.from(await r.blob.arrayBuffer()));
     say(`  ${C.d}${r.note}${C.x}`);
+    if (METHOD && !(r.fpsGuarded && (r.fpsGuarded.mvhd || r.fpsGuarded.mdhd)))
+      say(`  ${C.y}⚠ --method: no 60/120 fps source detected — timescale not touched.${C.x}`);
+    if (r.fpsGuarded && (r.fpsGuarded.mvhd || r.fpsGuarded.mdhd)) {
+      say(`  ${C.b}→ frame-rate method: headers now declare ${(src.fps / r.fpsGuarded.divider).toFixed(2)} fps;` +
+          ` the ${src.fps} fps samples pass through untouched.${C.x}`);
+      say(`  ${C.d}TikTok's encoder finds a rate it considers "nothing to decimate" — the trick behind${C.x}`);
+      say(`  ${C.d}every "60/120 fps method" video. Local players may report the halved rate — expected.${C.x}`);
+    }
     say(`\n${C.g}✓ ${outPath}${C.x}  (${(fs.statSync(outPath).size/1048576).toFixed(1)} MB — streams copied, no quality change)`);
     if (src.hdr) {
       say(`\n  ${C.B}📱 HDR file — upload from the PHONE APP, not desktop web.${C.x}`);
