@@ -555,6 +555,19 @@ A-HDR = done · B-only = plain HLG required (engine default flips) · C-only =
 our remux hurts (bug hunt) · none = route/source-format variables. This is
 §8.4's variant generator, focused on the goal.
 
+**A/B/C RESULT (owner, 27 Sept 2026): NO variant showed visible HDR.**
+A (method, DV kept) ✗ · B (method, plain HLG) ✗ · C (untouched original) ✗.
+Eliminations: our remux exonerated (C failed too) · the method exonerated ·
+DV-vs-HLG made no difference. Remaining suspects, in order:
+1. **Source validity** — was the probe's colour row actually Dolby Vision/HLG
+   10-bit? (The Forge screenshot's file read SDR; if the tested clip was that
+   one, the whole run was void.)
+2. **Route** — all three went Studio "Only me" → app flip. The desktop upload
+   path may flatten HDR before the flip; the flip may not re-run the app
+   pipeline. UNTESTED: the phone **share-sheet** file route with a method file.
+3. **Account/settings gating** — "Allow high-quality uploads" must be ON
+   (Settings → Content preferences); account-level HDR ladder gating possible.
+
 **Decision tree — one download-back of the current test post decides:**
 - delivered colour = **bt709 / 8-bit** → TikTok tonemapped it. Next levers:
   source codec (HEVC DV, never H.264), 4K60 upload (better ladder), route.
@@ -654,6 +667,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 27 | **Method's first measured result**: 60fps preserved ✅ (timescale patch works on our account), slower first render ✅ (HDR pipeline entered — previous posts skipped it), visible HDR ❌ ("a bit brighter, not HDR"). Diagnosis table recorded at §2.9 — one download-back (colour tags + bitrate) discriminates SDR-tonemap vs starved-HDR vs HLG-source. |- Wants all three surfaces at feature parity (website and extension must not lag
 | 28 | **00:00 patch is dead on both routes after the TikTok update** (owner screenshot: post screen, `-patched.mp4`, no duration, can't publish). Studio already refused; now the app blocks posting. All surfaces relabel the patch "likely broken — Sept 2026 update"; frame-rate method unaffected (real duration). Matches vague-infinity's "NOVA updated" scramble. |  the CLI)
 | 29 | **A/B test kit built** (site `#abkit` + CLI `--kit`): writes -A-method / -B-plainHDR / -C-untouched variants for HDR sources — the instrument that finds this account's HDR recipe in one posting session. Motivation: every prior HDR belief was confounded by the gallery route (incl. the strip-DV revert — same confound as §2.3b). Website 56/56. |- Prefers being shown the command to run over long explanations
+| 30 | **A/B/C null result**: no variant (method / plain-HLG / untouched) delivered visible HDR. Tool + method + DV-vs-HLG all exonerated. Remaining: source validity, route (share sheet untested), account gating (HQ-uploads setting). Next: share-sheet test with a confirmed-HDR source. |
 - Will push back hard on anything that doesn't work; take it seriously and test
   rather than explain
 - **Changes machines constantly.** GitHub is the single source of truth — never
