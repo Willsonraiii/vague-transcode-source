@@ -420,7 +420,11 @@ async function probeSource(file, tools) {
     }
     say(`\n${C.g}✓ ${outPath}${C.x}  (${(fs.statSync(outPath).size/1048576).toFixed(1)} MB — streams copied, no quality change)`);
     if (src.hdr) {
-      say(`\n  ${C.B}📱 HDR file — upload from the PHONE APP, not desktop web.${C.x}`);
+      say(`\n  ${C.B}📱 HDR file — two routes that keep it:${C.x}`);
+      say(`  ${C.b}A. TikTok Studio (desktop) as "Only me" → then flip to Everyone IN THE APP.${C.x}`);
+      say(`  ${C.d}   Community-verified: 60fps · 1080p · HDR · HEVC survive. Works with --method`);
+      say(`     files (real duration — Studio refuses 00:00 patched files).${C.x}`);
+      say(`  ${C.b}B. Phone file route: Files picker / iOS share sheet (Files → Share → TikTok).${C.x}`);
       say(`  ${C.d}Transfer losslessly: USB · Telegram "Send as File" · python3 -m http.server 8000${C.x}`);
       say(`  ${C.y}📎 In the app, attach via "Files" — NOT the gallery (gallery re-encodes).${C.x}`);
     } else {
@@ -529,9 +533,9 @@ async function probeSource(file, tools) {
     const mb = (fs.statSync(outPath).size / 1048576).toFixed(1);
     say(`\n${C.g}${C.B}✓ Done — ${outPath} (${mb} MB)${C.x}`);
     if (res && res.hdr) {
-      say(`\n  ${C.B}📱 This file is HDR — upload it from the PHONE APP.${C.x}`);
-      say(`  ${C.d}TikTok's HDR pipeline only runs on the app upload path; the same file`);
-      say(`  posted from desktop web comes back SDR.${C.x}`);
+      say(`\n  ${C.B}📱 This file is HDR — two routes that keep it:${C.x}`);
+      say(`  ${C.b}A. Studio (desktop) as "Only me" → flip to Everyone IN THE APP — keeps 60fps/HDR/HEVC${C.x}`);
+      say(`  ${C.b}B. Phone file route: Files picker / iOS share sheet${C.x}`);
       say(`  ${C.d}Get it to the phone losslessly: USB · Telegram "Send as File" ·`);
       say(`  python3 -m http.server 8000 · Drive/Dropbox as a file. Never WhatsApp.${C.x}`);
       say(`\n  ${C.y}📎 In the TikTok app, add it via "Files"/attach — NOT from the gallery.`);

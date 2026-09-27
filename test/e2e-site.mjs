@@ -101,7 +101,7 @@ if (out) {
     { timeout: 15000 }).catch(() => {});
   const after2 = await page.locator('#results').innerText();
   chk('upload checklist appeared', after2.includes('upload it'));
-  chk('HDR file routed to PHONE', /phone app/i.test(after2));
+  chk('HDR routes shown: Studio Only-me flip + phone file route', /Only me/.test(after2) && /Everyone/.test(after2));
 }
 
 /* ------------------------------------- 4. SDR file gets desktop guidance */

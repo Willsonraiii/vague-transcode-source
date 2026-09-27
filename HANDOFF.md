@@ -52,6 +52,7 @@ sites. **Do not re-derive these from first principles — they were verified.**
 | Without that toggle, TikTok can deliver 30 fps even from a 60 fps source | |
 | **H.265 is re-encoded lossily by TikTok**; H.264 is the safer SDR codec | |
 | Desktop web upload = **one** compression pass. Phone gallery upload = **two** | |
+| **Studio "Only me" → flip to Everyone in the app**: community-verified to keep **60 fps · 1080p · HDR · HEVC** | Reported by multiple sites/creators (owner relayed, Sept 2026). Mechanism: desktop = file route (no gallery re-encode) + the app-side visibility flip publishes through the app pipeline. Not yet tested by us |
 | Max upload: 287.6 MB mobile / **4 GB desktop web** | |
 
 ### 2.2 The Dolby Vision finding ⭐ → **REVERSED**
@@ -314,6 +315,32 @@ intact, DV kept, byte-identical, works with moov-move).
 **Not yet owner-tested against TikTok** — the decisive post: one file with
 the method, one without.
 
+### 2.10 The Studio "Only me" → app-flip route ⭐ (community-verified, untested by us)
+
+Multiple sites/creators report the upload route that preserves everything:
+
+1. Upload from **TikTok Studio on desktop** with visibility **"Only me"**
+2. Open the **app** → the post → switch visibility to **Everyone**
+
+Reported result: **60 fps · 1080p · HDR · HEVC all survive** — no 30fps
+conversion.
+
+Why this matters here:
+- **Desktop Studio is a FILE route** — it sidesteps the gallery problem (§2.4:
+  the owner's app has no Files picker; the gallery re-encodes).
+- The **app-side flip** appears to run the publish through the app pipeline —
+  reconciling the old "desktop-web HDR comes back SDR" observation with HDR
+  surviving this route.
+- It pairs with the **frame-rate method** (§2.9): method files keep a real
+  duration, so Studio's validation accepts them. (00:00-patched files are
+  still refused by Studio — those stay on the phone route.)
+- The old checklist line "post public, not Only me" came from phone-route-era
+  advice and is now route-dependent: direct public on the phone route;
+  "Only me" → flip on the Studio route.
+
+**Open:** owner A/B — method-ticked HDR file via Studio+flip vs phone route
+(§8.7). All surfaces now present this route.
+
 ---
 
 ## 3. Architecture
@@ -470,8 +497,9 @@ Pattern: I reasoned from how systems *should* work. The owner tested how this on
    SDR file:  ./vague.sh clip.mp4 --remux-only --patch       (1-tick, optional)
    or the website / extension — the same rules are enforced there
 4. Move back to the phone losslessly
-5. Pass the FILE itself: Files picker if your app has one, else the
-   iOS share sheet (Files app → Share → TikTok). The gallery re-encodes
+5. Route the file: Studio (desktop) as "Only me" → flip to Everyone in the
+   app (§2.10 — community-verified, keeps 60fps/HDR/HEVC), or the phone file
+   route (Files picker / share sheet). The gallery re-encodes
 6. "Allow high-quality uploads" ON · post public
 7. DO NOT edit after posting — no sounds, trims, filters
 8. Wait 30+ min · check on the phone, never desktop web
@@ -520,9 +548,10 @@ Remaining:
    derivative. Never measured on our account. One test clip posted via the
    gallery + "Did it survive?" settles it.
 
-7. **Method A/B against TikTok** — one file with the frame-rate method (§2.9),
-   one without, same clip, post both, compare with "Did it survive?". First
-   real measurement of the timescale patch on our own account.
+7. **Method + route A/B against TikTok** — same HDR clip: (a) method on,
+   Studio "Only me" → app flip (§2.10); (b) method on, phone file route;
+   (c) method off, control. Compare fps/HDR/HEVC with "Did it survive?".
+   First real measurement of the timescale patch AND the Studio-flip route.
 
 6. **Measure the Nova example post** — https://vt.tiktok.com/ZSbdQVqav/
    ("latest method"). Download it and run the compare tool: what resolution,
@@ -561,7 +590,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 22 | **Downloader echo discovered**: post downloads are mixed — some show 00:00 and won't play (our own patched upload, stored & served by TikTok), some play normally. "HDR 4K 60" tag readings on downloads are unreliable until the download plays with a normal duration. Compare tool now warns about this. Owner agreed to the decisive unpatched-HDR test (§8.1). |
 | 23 | **Found and implemented the actual paid method**: ut0ku/120fps-method (open source) — divide mvhd+mdhd timescale+duration by 2/4 so TikTok's encoder reads half the fps and decimates nothing. Lossless, real duration kept, HDR-safe. Default-on for >48fps on all surfaces (`--method`/`#method`/`#vg-method`); 13-check unit suite + browser e2e. Owner context: creators' uploads showed 00:00 (paid tools combine BOTH patches); their delivered posts still crash the gallery. |## 9. Standing preferences
 | 24 | **Owner: HDR is the main target — others patch HDR, we refused it.** §2.3b block LIFTED on all surfaces (patch on HDR = experimental + confound note: the failed test went through the gallery, which re-encodes; creators' patched HDR delivers). CLI `--patch --method` on HDR now builds the full paid-method file (1-tick + timescale ÷2 + DV kept, byte-identical). Clean A/B recorded at §8.7. |
-- Personal use — no monetisation advice
+| 25 | **Studio "Only me" → flip-to-Everyone route** relayed by the owner from creator sites: desktop upload as private, flip visibility in the app — keeps 60fps/1080p/HDR/HEVC. It's a file route (no gallery re-encode) whose app-side flip reconciles the old "desktop HDR = SDR" observation; pairs with the frame-rate method (real duration passes Studio validation). All surfaces updated; checklist's "never Only me" line made route-dependent (§2.10). |- Personal use — no monetisation advice
 - Wants real working software, not specs or mockups
 - Wants all three surfaces at feature parity (website and extension must not lag
   the CLI)

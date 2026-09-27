@@ -134,8 +134,10 @@ sudo apt install -y xvfb libnspr4 libnss3 libasound2t64 libatk1.0-0t64 \
 2. Transfer to PC losslessly  (iPhone: Settings → Photos → Keep Originals, then USB)
 3. Fix the container  (website, extension, or ./vague.sh --remux-only --method)
 4. Move back to the phone losslessly
-5. TikTok app → +  →  "Files" / attach      ← never the gallery
-6. "Allow high-quality uploads" ON · post public
+5. Route it: TikTok Studio (desktop) as "Only me" → flip to Everyone in the
+   app (community-verified: 60fps/HDR/HEVC survive), or the phone file route
+   (Files picker / iOS share sheet). The gallery re-encodes — never the gallery
+6. "Allow high-quality uploads" ON
 7. Do not edit after posting — no sounds, trims, filters
 8. Wait 30+ minutes, check on the phone (desktop web never shows HDR)
 ```
