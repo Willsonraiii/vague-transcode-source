@@ -525,6 +525,18 @@ the HDR data survives TikTok's pipeline but the player won't render it as HDR.
 
 ## 8. Open threads
 
+**THE GOAL (owner, Sept 2026): "HDR smooth" — visible HDR + smooth 60fps in
+the TikTok feed.** Status: smooth ✅ (frame-rate method, measured), HDR
+pipeline entered ✅ (slow first render), visible HDR ❌ — the last third.
+
+**Decision tree — one download-back of the current test post decides:**
+- delivered colour = **bt709 / 8-bit** → TikTok tonemapped it. Next levers:
+  source codec (HEVC DV, never H.264), 4K60 upload (better ladder), route.
+- delivered = **10-bit PQ/HLG, low bitrate** → HDR IS in the stream, starved.
+  Lever: 4K60 source (our account delivers 4K), higher-bitrate export.
+- delivered = **10-bit but source was HLG** → try a Dolby Vision 8.4 source
+  (iPhone native, or DaVinci main10 + RPU) — §2.2 says keep DV.
+
 ✅ **RESOLVED — website is live and fully current.** Verified 27 Sep 2026: all of
 Files-attach guidance, 1-tick patch, plain-HDR option, compare mode, HDR→phone
 routing, strip-DV / edit-list / rebrand engine code are serving from
