@@ -245,18 +245,14 @@
       <input type="checkbox" id="vg-nodv"> <b>Strip Dolby Vision</b> (off — testing only)
       <span>⚠ Leave OFF. HDR stopped surviving upload while this was on — TikTok may need the
       Dolby Vision box to treat the file as HDR at all.</span></label>`);
-    if (!parseFailed && !probe?.hdr) btns.push(`<label class="vg-opt" style="background:#fff3d6">
-      <input type="checkbox" id="vg-zero"> <b>Duration patch</b>
+    if (!parseFailed) btns.push(`<label class="vg-opt" style="background:#fff3d6">
+      <input type="checkbox" id="vg-zero"> <b>Duration patch</b>${probe?.hdr ? ' (experimental on HDR)' : ''}
       <span>⚠ A patched file CANNOT be uploaded here — TikTok Studio on desktop refuses it.
       Use it only if you will move the file to your phone and pass the file itself —
       the Files picker if your app has one, or the iOS share sheet (Files app → Share → TikTok).
       The gallery re-encodes it and rebuilds the duration. And keep patched files OUT of
       iOS Photos — a 00:00 file can crash the gallery (tested). Store it in the Files app.
-      Shows 00:00, which is expected.</span></label>`);
-    else if (!parseFailed) btns.push(`<div class="vg-opt" style="background:#fff3d6;opacity:.65">
-      <b>Duration patch — not for HDR files</b>
-      <span>⚠ Tested: a patched HDR file does not render as HDR in TikTok's player (the data
-      survives their pipeline; playback never enters HDR mode for a 00:00 file). SDR only.</span></div>`);
+      Shows 00:00, which is expected.${probe?.hdr ? '<br><br>⚠ On HDR: our one patched-HDR test did not render HDR in-app — but it went through the gallery (re-encodes), so it was confounded. Creators&rsquo; patched HDR files do deliver HDR. Test once on your account.' : ''}</span></label>`);
 
     btns.push(`<button class="vg-fix vg-cancel" data-act="cancel">Cancel</button>`);
     host.innerHTML = btns.join('');

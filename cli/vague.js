@@ -26,7 +26,8 @@
  *                       file does not render as HDR in TikTok's player; refused
  *                       automatically on HDR input (HANDOFF §2.3b)
  *   --patch-aggressive  also zero track + media headers (BREAKS TikTok uploads)
- *   --force-patch       allow --patch on an HDR file anyway (experimental)
+ *   --force-patch       (compatibility) accepted, no longer needed — --patch runs
+ *                       on HDR with an experimental warning (§2.3b is confounded)
  *   --method            the 60/120fps method: divide mvhd+mdhd timescale by 2
  *                       (60fps) or 4 (120fps) so TikTok's encoder reads half
  *                       the frame rate and decimates nothing. Lossless, keeps
@@ -320,17 +321,11 @@ async function probeSource(file, tools) {
   // Refuse the combination unless the output will actually be SDR (--sdr on
   // the transcode path — a remux copies streams, so --sdr rescues nothing
   // there) or the owner explicitly overrides (--force-patch).
-  const patchOutputHdr = src.hdr && !(FORCE_SDR && !REMUX);
-  if (PATCH && patchOutputHdr && !FORCE_PATCH) {
-    fail('Duration patch + HDR are mutually exclusive\n' +
-         '  Tested (HANDOFF §2.3b): a patched HDR file does not RENDER as HDR in the\n' +
-         '  TikTok player — the HDR data survives their pipeline, playback just never\n' +
-         '  enters HDR mode for a file whose header reads 00:00.\n' +
-         '  Your options:\n' +
-         '    • drop --patch        keep HDR rendering\n' +
-         (REMUX ? '' :
-         '    • add --sdr           tonemap to SDR, then the patch is safe\n') +
-         '    • add --force-patch   override anyway (experimental)');
+  if (PATCH && src.hdr) {
+    say(`\n  ${C.y}${C.B}⚠ EXPERIMENTAL: duration patch on an HDR file.${C.x}`);
+    say(`  ${C.y}Our one patched-HDR test did not render HDR in-app (§2.3b) — but it went through${C.x}`);
+    say(`  ${C.y}the gallery, which re-encodes, so that result was confounded. Creators' patched${C.x}`);
+    say(`  ${C.y}HDR files DO deliver full HDR in the feed. Proceeding — verify on your account.${C.x}`);
   }
 
   const dx = diagnose(src);
@@ -399,7 +394,8 @@ async function probeSource(file, tools) {
       say(`  ${C.y}     the gallery (owner-tested). Store it in the Files app.${C.x}`);
       say(`  ${C.d}Showing 00:00 in your gallery is expected. That is the patch working.${C.x}`);
       if (src.hdr)
-        say(`  ${C.r}   ⚠ forced on an HDR file — expect HDR NOT to render in the player (§2.3b)${C.x}`);
+        say(`  ${C.y}   ⚠ experimental on HDR — check the post for the HDR badge; if absent,${C.x}`);
+        say(`  ${C.y}     re-post without --patch (§2.3b confound documented in HANDOFF)${C.x}`);
     }
     process.stderr.write('\n');
 
@@ -527,7 +523,7 @@ async function probeSource(file, tools) {
       zeroDurations(outPath);
       say(`  ${C.y}⚑ header duration zeroed (players will show 0:00)${C.x}`);
       if (src.hdr && !FORCE_SDR)
-        say(`  ${C.r}  ⚠ forced on an HDR file — expect HDR NOT to render in the player (§2.3b)${C.x}`);
+        say(`  ${C.y}  ⚠ experimental on HDR — verify the post renders HDR (§2.3b confound)${C.x}`);
     }
 
     const mb = (fs.statSync(outPath).size / 1048576).toFixed(1);
