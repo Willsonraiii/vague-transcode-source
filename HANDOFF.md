@@ -42,7 +42,8 @@ sites. **Do not re-derive these from first principles — they were verified.**
 |---|---|
 | TikTok re-encodes **every** upload. No exceptions. | Universal across sources |
 | **TikTok ACCEPTS 4K 60 fps uploads; 120 fps content is served on-platform** | Owner-verified, Sept 2026 |
-| **TikTok DELIVERS 4K 60 HDR** — a 4K60 Dolby Vision upload, downloaded back with a third-party downloader, reads **HDR 4K 60** in the gallery | **First delivered-upload measurement ever** (owner, Sept 2026). The old "~1080p at 2–2.5 Mbps ceiling" — blogs + one old reference video — did not hold for this account. Delivered bitrate: not yet measured |
+| **TikTok DELIVERS 4K 60** — a 4K60 upload shows as 4K 60 in-app; resolution and fps survive the pipeline | **First delivered-upload measurement** (owner, Sept 2026). The old "~1080p at 2–2.5 Mbps ceiling" — blogs + one old reference video — did not hold. Delivered bitrate: not yet measured |
+| The downloaded post carries **HDR tags** (gallery reads "HDR 4K 60") — but in-app playback never engaged HDR on that (patched) upload | Tags surviving ≠ HDR playback. Creators' HDR posts badge + render slower (separate HDR pipeline); ours played instantly with no badge — §2.3b signature |
 | **TikTok DOES support HDR playback** | It shipped a "Standard Video Playback" accessibility toggle in Sept 2025 so viewers can *dim* HDR; colorists report TikTok accepts PQ where Instagram does not |
 | HDR renders on the **mobile app only** | Desktop web player never shows HDR |
 | 60 fps is accepted; delivered to selected accounts | |
@@ -98,6 +99,15 @@ timing so the media is valid.
 `--patch-aggressive` still exists (zeroes all three) purely for experimentation.
 It is known to break uploads.
 
+**Gallery instability (owner-tested, Sept 2026):** importing a patched
+(00:00) file into iOS Photos can crash the gallery — Photos force-closed
+repeatedly until the file was removed. Apple's importer reads durations from
+different MP4 boxes than its player does (documented in the wild:
+toanhblab/btvn PR #40 — all-zero durations truncate "Save to Photos", and
+Photos may read a different box than WebKit). Our mvhd=1-with-real-tkhd/mdhd
+is milder than all-zero, but not proven safe. **Rule: patched files live in
+the Files app, never in Photos.**
+
 ### 2.3b The patch and HDR are mutually exclusive ⭐⭐
 
 **Tested by the owner, and the most precise finding in the project.**
@@ -132,6 +142,12 @@ placebo. It is simply incompatible with HDR.
 third-party download reads **HDR 4K 60** in the gallery, while the app shows
 no Dolby/HDR badge — same signature: the data survives, the player doesn't
 badge it.
+
+Supporting observation (owner, same test): creators' HDR posts in-app carry
+an HDR badge and a **slower first render** — there is a separate HDR
+processing/delivery path. The patched post played instantly, no badge: the
+HDR path was skipped entirely. So a downloaded file's HDR tags prove *tag
+survival*, not that viewers got HDR playback.
 
 **Method note worth copying:** the owner distinguished "did the data survive"
 from "does the player render it" by downloading the post back. Those look
@@ -178,25 +194,30 @@ Detection heuristic implemented in `hdr-doctor.js`: a 4K file that is 8-bit
 H.264 SDR is almost certainly transfer-damaged, because phones record 4K as
 HEVC 10-bit.
 
-### 2.6 4K — accepted AND delivered ⭐ (measured)
+### 2.6 4K — accepted AND delivered ⭐ (measured, with an HDR asterisk)
 
-**Measured Sept 2026 (owner):** a 4K 60 Dolby Vision upload came back from
-TikTok as **4K 60 HDR** — the downloaded post reads "HDR 4K 60" in the
-gallery, and 4K + 60 fps are visible in-app. The delivery ladder served 4K60
-to this account. The old "TikTok delivers ~1080p at 2–2.5 Mbps" ceiling —
-inherited from blog posts and one old reference video — did not hold.
+**Measured Sept 2026 (owner):** a 4K 60 Dolby Vision upload (patched, 00:00):
 
-Still open (both answered by one drop into "Did it survive?"): the delivered
-**bitrate**, and whether the delivered file keeps the Dolby Vision RPU or is
-re-tagged as plain HLG/PQ.
+- In-app, the post shows **4K 60** — resolution and frame rate were
+  delivered. The old "TikTok delivers ~1080p at 2–2.5 Mbps" ceiling —
+  inherited from blog posts and one old reference video — did not hold.
+- The post downloaded back (third-party downloader) reads **HDR 4K 60** in
+  the gallery — HDR *tags* exist in the delivered/downloaded file.
+- **But in-app playback never engaged HDR** (§2.3b): no badge, instant
+  playback, while creators' HDR posts badge and render slower.
+
+Open discrimination, one look: **what duration does the gallery show for the
+downloaded post?** `00:00` → the downloader echoed our own patched file back
+and we learned nothing about TikTok's encoder. A normal duration → TikTok's
+re-encode kept the HDR tags. Also still open: delivered bitrate; whether an
+**unpatched** HDR upload badges + HDR-renders in-app (§8.1).
 
 Consequences:
 - The engine accepts and preserves 4K60/120 on every surface (no forced
-  downscale, no fps decimation).
-- **"Shoot 1080p, not 4K" is retired.** Exporting 4K60 HDR is a
-  measured-deliverable option, and the lossless remux handles a 4K file just
-  as fast (~1 s — no re-encode happens either way). 1080p60 HDR remains fine
-  and keeps files small; both deliver.
+  downscale, no fps decimation). "Shoot 1080p, not 4K" is retired — 4K and
+  60 fps delivery are real.
+- **HDR delivery is NOT established** — only tag survival. Don't claim HDR
+  delivery until an unpatched HDR post badges and HDR-renders in-app.
 - `--1080p` (CLI) survives only as an A/B curiosity.
 
 ### 2.7 Hardware limits on the owner's laptop
@@ -419,11 +440,13 @@ https://willsonraiii.github.io/vague-transcode/
 
 Remaining:
 
-1. ✅ **FIRST DELIVERY MEASUREMENT DONE (Sept 2026)** — a 4K60 Dolby Vision
-   upload came back from TikTok as **4K 60 HDR** (§2.6). Nice-to-dos: run that
-   downloaded file through "Did it survive?" to record delivered bitrate and
-   exact HDR tags; and post an **unpatched** HDR clip once, to see whether the
-   app renders/badges HDR when the duration header is normal.
+1. ✅ **FIRST DELIVERY MEASUREMENT DONE (Sept 2026)** — 4K60 delivered
+   (§2.6); HDR tags survived in the download but in-app HDR never engaged.
+   Two follow-ups, each one look: (a) check the duration the gallery shows on
+   the downloaded post — `00:00` = downloader echoed our patched file,
+   normal = TikTok's re-encode kept HDR tags; (b) post **one unpatched** HDR
+   clip — if it badges + HDR-renders in-app, the patch is the only blocker
+   between us and creators'-style HDR delivery.
 
 2. **Does stripping Dolby Vision break HDR?** It was briefly ON by default and
    HDR stopped surviving. Now OFF everywhere. Two uploads — one with, one
@@ -478,7 +501,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 18 | **Owner verified TikTok accepts 4K 60 fps (and has seen 120 fps served)** → engine limits raised (2160×3840, 120 fps, 4K HDR), all surfaces stop warning about 4K, CLI keeps 4K by default with `--1080p` as the optional downscale. Acceptance ≠ delivery: whether our account is *served* >1080p is still unmeasured. |
 | 19 | **Owner: the app has no Files picker (gallery only), and the site "downloads quickly without working/patching".** Byte-verification proved the patch DOES apply (`mvhd`=1 in the output) — the gallery route strips it after upload. Site rebuilt: new step-4 "Verified" card re-probes the output file and shows a before→after table (moov position, duration header, DV, edit list, branding, byte-identity); all upload guidance now matches gallery-only reality (share-sheet route + verify with compare tool). |
 | 20 | **FIRST DELIVERY MEASUREMENT**: owner uploaded 4K60 Dolby Vision (patched) — app shows 4K 60 but no Dolby badge; the third-party download of the post reads **HDR 4K 60** in the gallery. TikTok delivers 4K60 HDR → §2.1/§2.6/§7/§8 updated, "shoot 1080p" advice retired, §2.3b signature reproduced. |
----
+| 21 | **Owner follow-up on the 4K60 test**: patched file crashed the phone gallery (Photos force-closes; patched files now live in Files, never Photos — §2.3). Creators' HDR posts badge + render slower in-app; ours played instantly with no badge → HDR pipeline was skipped; downloaded-post HDR tags = tag survival, not playback. §2.6 downgraded from "delivers 4K60 HDR" to "delivers 4K60; HDR tags ≠ HDR playback". |---
 
 ## 9. Standing preferences
 

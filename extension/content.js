@@ -244,7 +244,9 @@
       <span>⚠ A patched file CANNOT be uploaded here — TikTok Studio on desktop refuses it.
       Use it only if you will move the file to your phone and pass the file itself —
       the Files picker if your app has one, or the iOS share sheet (Files app → Share → TikTok).
-      The gallery re-encodes it and rebuilds the duration. Shows 00:00, which is expected.</span></label>`);
+      The gallery re-encodes it and rebuilds the duration. And keep patched files OUT of
+      iOS Photos — a 00:00 file can crash the gallery (tested). Store it in the Files app.
+      Shows 00:00, which is expected.</span></label>`);
     else if (!parseFailed) btns.push(`<div class="vg-opt" style="background:#fff3d6;opacity:.65">
       <b>Duration patch — not for HDR files</b>
       <span>⚠ Tested: a patched HDR file does not render as HDR in TikTok's player (the data

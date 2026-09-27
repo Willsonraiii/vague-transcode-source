@@ -38,7 +38,7 @@ container layout changes, so the file size is identical:
 | QuickTime → MP4 | `ftyp` major brand `qt  ` → `mp42` |
 | Edit lists | `edts` renamed to `free` so readers skip it |
 | Strip Dolby Vision | `dvcC` → `free` *(off by default — see HANDOFF)* |
-| Duration patch | `mvhd` duration → 1 tick, shows 00:00 *(opt-in · SDR only — refused on HDR input, see HANDOFF §2.3b)* |
+| Duration patch | `mvhd` duration → 1 tick, shows 00:00 *(opt-in · SDR only — refused on HDR input, HANDOFF §2.3b; keep out of iOS Photos — can crash the gallery)* |
 
 **Transcodes** (CLI only) — optional 4K → 1080p downscale (`--1080p`) while
 preserving Dolby Vision, via `dovi_tool` extract → encode → inject → verify.
@@ -53,7 +53,7 @@ against what they served.
 
 **Every platform re-encodes every upload** — but the ceiling is higher than
 the blogs say: measured on our account (Sept 2026), TikTok delivered a 4K60
-HDR upload back as **4K 60 HDR**. No tool prevents the re-encode; anything
+upload back as **4K 60**. No tool prevents the re-encode; anything
 claiming "no compression" is describing the file it hands back, not what
 viewers receive. Verify your own delivery: post, download the post back, use
 the compare tool.
@@ -128,7 +128,8 @@ sudo apt install -y xvfb libnspr4 libnss3 libasound2t64 libatk1.0-0t64 \
 
 ```
 1. Shoot / export 4K60 or 1080p60 HDR — 4K60 delivery measured on our account
-   (Sept 2026: 4K60 DV upload came back as 4K 60 HDR)
+   (Sept 2026; HDR tags survived the download but in-app HDR playback is only
+   expected on an UNPATCHED upload)
 2. Transfer to PC losslessly  (iPhone: Settings → Photos → Keep Originals, then USB)
 3. Fix the container  (website, extension, or ./vague.sh --remux-only)
 4. Move back to the phone losslessly

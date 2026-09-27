@@ -90,8 +90,13 @@ if (out) {
   chk('verification proves byte-identity', /byte-identical/.test(vtxt));
   chk('verification shows moov moved', /moov at front/.test(vtxt));
   chk('verification shows DV removed', /plain HLG HDR/.test(vtxt));
-  chk('upload checklist appeared', after.includes('upload it'));
-  chk('HDR file routed to PHONE', /phone app/i.test(after));
+  // the verify card is built async; wait for the checklist that follows it
+  await page.waitForFunction(
+    () => /upload it/i.test(document.querySelector('#results')?.innerText || ''),
+    { timeout: 15000 }).catch(() => {});
+  const after2 = await page.locator('#results').innerText();
+  chk('upload checklist appeared', after2.includes('upload it'));
+  chk('HDR file routed to PHONE', /phone app/i.test(after2));
 }
 
 /* ------------------------------------- 4. SDR file gets desktop guidance */
@@ -105,7 +110,9 @@ const dl2 = page.waitForEvent('download', { timeout: 30000 });
 await page.locator('#run').click();
 try { await dl2; chk('SDR + patch downloads', true); }
 catch (e) { chk('SDR + patch downloads', false, '  ' + e.message.split('\n')[0]); }
-await page.waitForTimeout(1500);
+await page.waitForFunction(
+  () => /upload it/i.test(document.querySelector('#results')?.innerText || ''),
+  { timeout: 15000 }).catch(() => {});
 const sdrText = await page.locator('#results').innerText();
 chk('SDR routed to DESKTOP', /TikTok Studio on desktop/i.test(sdrText));
 const vtxt2 = await page.locator('#verify').innerText().catch(() => '');

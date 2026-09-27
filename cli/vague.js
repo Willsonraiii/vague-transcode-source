@@ -388,6 +388,8 @@ async function probeSource(file, tools) {
       say(`        share sheet (Files app -> Share -> TikTok). NOT the gallery — it re-encodes`);
       say(`        and rebuilds the duration, which strips the patch`);
       say(`     3. do NOT use TikTok Studio on desktop — it will refuse the file${C.x}`);
+      say(`  ${C.y}   4. keep the patched file OUT of iOS Photos — a 00:00 duration can crash${C.x}`);
+      say(`  ${C.y}     the gallery (owner-tested). Store it in the Files app.${C.x}`);
       say(`  ${C.d}Showing 00:00 in your gallery is expected. That is the patch working.${C.x}`);
       if (src.hdr)
         say(`  ${C.r}   ⚠ forced on an HDR file — expect HDR NOT to render in the player (§2.3b)${C.x}`);
