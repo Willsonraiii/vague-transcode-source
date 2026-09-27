@@ -101,7 +101,8 @@ It is known to break uploads.
 
 **Gallery instability (owner-tested, Sept 2026):** importing a patched
 (00:00) file into iOS Photos can crash the gallery — Photos force-closed
-repeatedly until the file was removed. Apple's importer reads durations from
+repeatedly until the file was removed. Downloads of a patched post that echo
+the original also **refuse to play** in iOS players — same 1-tick cause. Apple's importer reads durations from
 different MP4 boxes than its player does (documented in the wild:
 toanhblab/btvn PR #40 — all-zero durations truncate "Save to Photos", and
 Photos may read a different box than WebKit). Our mvhd=1-with-real-tkhd/mdhd
@@ -206,11 +207,19 @@ HEVC 10-bit.
 - **But in-app playback never engaged HDR** (§2.3b): no badge, instant
   playback, while creators' HDR posts badge and render slower.
 
-Open discrimination, one look: **what duration does the gallery show for the
-downloaded post?** `00:00` → the downloader echoed our own patched file back
-and we learned nothing about TikTok's encoder. A normal duration → TikTok's
-re-encode kept the HDR tags. Also still open: delivered bitrate; whether an
-**unpatched** HDR upload badges + HDR-renders in-app (§8.1).
+**Discriminator run (owner, Sept 2026):** downloads of posts come back mixed —
+**some show 00:00 and won't play** (our own patched upload echoed back: TikTok
+stores the original file and third-party downloaders can fetch it), **some
+play with a normal duration** (likely TikTok's rendition). Consequences:
+
+- The "HDR 4K 60" tag reading on a download is **unreliable** — it may be our
+  own file's tags. Only a playing, normal-duration download (a genuine
+  rendition) counts as evidence about TikTok's encoder.
+- 1-tick files can also make iOS **players refuse playback** — patched-file
+  toxicity extends beyond the gallery crash (§2.3).
+- Still open: characterise a genuine rendition (codec/bitrate/tags via the
+  compare tool); whether an **unpatched** HDR upload badges + HDR-renders
+  in-app (§8.1) — owner has agreed to run this test.
 
 Consequences:
 - The engine accepts and preserves 4K60/120 on every surface (no forced
@@ -502,7 +511,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 19 | **Owner: the app has no Files picker (gallery only), and the site "downloads quickly without working/patching".** Byte-verification proved the patch DOES apply (`mvhd`=1 in the output) — the gallery route strips it after upload. Site rebuilt: new step-4 "Verified" card re-probes the output file and shows a before→after table (moov position, duration header, DV, edit list, branding, byte-identity); all upload guidance now matches gallery-only reality (share-sheet route + verify with compare tool). |
 | 20 | **FIRST DELIVERY MEASUREMENT**: owner uploaded 4K60 Dolby Vision (patched) — app shows 4K 60 but no Dolby badge; the third-party download of the post reads **HDR 4K 60** in the gallery. TikTok delivers 4K60 HDR → §2.1/§2.6/§7/§8 updated, "shoot 1080p" advice retired, §2.3b signature reproduced. |
 | 21 | **Owner follow-up on the 4K60 test**: patched file crashed the phone gallery (Photos force-closes; patched files now live in Files, never Photos — §2.3). Creators' HDR posts badge + render slower in-app; ours played instantly with no badge → HDR pipeline was skipped; downloaded-post HDR tags = tag survival, not playback. §2.6 downgraded from "delivers 4K60 HDR" to "delivers 4K60; HDR tags ≠ HDR playback". |---
-
+| 22 | **Downloader echo discovered**: post downloads are mixed — some show 00:00 and won't play (our own patched upload, stored & served by TikTok), some play normally. "HDR 4K 60" tag readings on downloads are unreliable until the download plays with a normal duration. Compare tool now warns about this. Owner agreed to the decisive unpatched-HDR test (§8.1). |
 ## 9. Standing preferences
 
 - Personal use — no monetisation advice
