@@ -14,6 +14,8 @@ Before suggesting or changing ANYTHING:
   1. Read README.md
   2. Read HANDOFF.md in full — all 10 sections
   3. Run: bash test/run-all.sh
+  4. git fetch origin — the owner changes machines constantly; GitHub is the
+     only source of truth. Never assume any local checkout is current.
 
 HANDOFF.md contains findings verified by real-world testing that contradict
 most online documentation and blog posts. Do not re-derive them from first
@@ -92,3 +94,8 @@ off by default. Two uploads — one with, one without — would settle it.
 - Test in a real browser before claiming the website or extension works —
   `test/e2e-site.mjs` and `test/e2e-extension.mjs` exist for this
 - Never claim "no quality loss" about anything the platform re-encodes
+- **The owner changes machines constantly.** Never hand work over as local
+  files, folder paths, or patch files to apply later — commit and push to
+  GitHub before ending a session. The repo is the only thing that follows
+  them between machines; everything local (including the Windows checkout at
+  `C:\Users\Admin\Projects\original`) may be stale or absent.

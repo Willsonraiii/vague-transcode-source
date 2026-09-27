@@ -18,8 +18,11 @@
  *   --sdr               force SDR tonemap even if HDR is possible
  *   --patch             movie-header duration -> 1 tick: shows 00:00 in galleries
  *                       and file browsers, but the track keeps real timing so
- *                       uploads still work
+ *                       uploads still work.  SDR FILES ONLY — a patched HDR
+ *                       file does not render as HDR in TikTok's player; refused
+ *                       automatically on HDR input (HANDOFF §2.3b)
  *   --patch-aggressive  also zero track + media headers (BREAKS TikTok uploads)
+ *   --force-patch       allow --patch on an HDR file anyway (experimental)
  *   --remux-only        lossless container fix, no re-encode
  *   --gpu               force hardware encoding (auto-detected by default)
  *   --cpu               never use hardware, always x265
@@ -63,6 +66,7 @@ const KEEP4K    = flag('keep-4k');
 const FORCE_SDR = flag('sdr');
 const PATCH_AGG = flag('patch-aggressive');
 const PATCH     = flag('patch') || PATCH_AGG;
+const FORCE_PATCH = flag('force-patch');
 const REMUX     = flag('remux-only');
 const GPU       = flag('gpu');
 const UPLOAD    = flag('upload');
@@ -299,6 +303,25 @@ async function probeSource(file, tools) {
   say(`  colour  ${src.colorPrimaries}/${src.colorTransfer}/${src.colorMatrix}`);
   say(`  dolby   ${src.hasDolbyVisionRPU ? C.g+`RPU present (profile ${src.dvProfile ?? '8.4'})`+C.x : 'none'}`);
 
+  // §2.3b — the duration patch and HDR are mutually exclusive on TikTok.
+  // Owner-tested: a patched HDR file keeps its HDR data through the pipeline,
+  // but the player never switches into HDR mode for a 00:00-duration file.
+  // Refuse the combination unless the output will actually be SDR (--sdr on
+  // the transcode path — a remux copies streams, so --sdr rescues nothing
+  // there) or the owner explicitly overrides (--force-patch).
+  const patchOutputHdr = src.hdr && !(FORCE_SDR && !REMUX);
+  if (PATCH && patchOutputHdr && !FORCE_PATCH) {
+    fail('Duration patch + HDR are mutually exclusive\n' +
+         '  Tested (HANDOFF §2.3b): a patched HDR file does not RENDER as HDR in the\n' +
+         '  TikTok player — the HDR data survives their pipeline, playback just never\n' +
+         '  enters HDR mode for a file whose header reads 00:00.\n' +
+         '  Your options:\n' +
+         '    • drop --patch        keep HDR rendering\n' +
+         (REMUX ? '' :
+         '    • add --sdr           tonemap to SDR, then the patch is safe\n') +
+         '    • add --force-patch   override anyway (experimental)');
+  }
+
   const dx = diagnose(src);
   if (dx.criticalCount) {
     head('Problems found');
@@ -359,6 +382,8 @@ async function probeSource(file, tools) {
       say(`     2. TikTok app -> +  ->  "Files" / attach   (NOT the gallery)`);
       say(`     3. do NOT use TikTok Studio on desktop — it will refuse the file${C.x}`);
       say(`  ${C.d}Showing 00:00 in your gallery is expected. That is the patch working.${C.x}`);
+      if (src.hdr)
+        say(`  ${C.r}   ⚠ forced on an HDR file — expect HDR NOT to render in the player (§2.3b)${C.x}`);
     }
     process.stderr.write('\n');
 
@@ -472,7 +497,12 @@ async function probeSource(file, tools) {
         }
       }
     }
-    if (PATCH) { zeroDurations(outPath); say(`  ${C.y}⚑ header duration zeroed (players will show 0:00)${C.x}`); }
+    if (PATCH) {
+      zeroDurations(outPath);
+      say(`  ${C.y}⚑ header duration zeroed (players will show 0:00)${C.x}`);
+      if (src.hdr && !FORCE_SDR)
+        say(`  ${C.r}  ⚠ forced on an HDR file — expect HDR NOT to render in the player (§2.3b)${C.x}`);
+    }
 
     const mb = (fs.statSync(outPath).size / 1048576).toFixed(1);
     say(`\n${C.g}${C.B}✓ Done — ${outPath} (${mb} MB)${C.x}`);

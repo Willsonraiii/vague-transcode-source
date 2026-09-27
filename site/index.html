@@ -217,8 +217,9 @@ function show(){
             p.isQuickTime?'relabel <b>QuickTime → MP4</b>':null,
             p.hasEditList?'neutralise the <b>edit list</b>':null].filter(Boolean).join(', ')}.
          Streams are copied byte-for-byte — ${p.hdr?'HDR, ':''}frame rate, bitrate and audio untouched.</p>`
-      : `<p class="tiny">Nothing needs fixing in the container. You can still apply the
-         experimental patch below, or just upload your original.</p>`}
+      : `<p class="tiny">Nothing needs fixing in the container. ${p.hdr
+            ? 'Just upload your original — the duration patch is not offered for HDR files.'
+            : 'You can still apply the experimental patch below, or just upload your original.'}</p>`}
     ${p.hasDolbyVisionRPU ? `<label class="opt" style="background:#eaf6ff"><input type="checkbox" id="nodv">
       <div>Strip Dolby Vision, keep HLG <em>(off — testing needed)</em>
       <span>Your file is Dolby Vision 8.4: an HLG base layer plus metadata. Removing the DV
@@ -228,13 +229,18 @@ function show(){
       is HDR at all — stripping it may drop you out of their HDR pipeline. The "HDR" tag you
       see on other people's videos is what TikTok <i>delivers</i>, not what they uploaded.
       Lossless either way.</span></div></label>` : ''}
-    <label class="opt" style="background:#fff3d6"><input type="checkbox" id="patch">
-      <div>Duration patch — <em>this is what the paid tools sell</em>
-      <span>Sets the movie-header duration to 1 tick, so the file shows <b>00:00</b> everywhere.
-      That is the expected result, not a fault.
-      <br><br><b>⚠ A patched file MUST be uploaded from the phone app using "Files" / attach.</b>
-      TikTok Studio on desktop validates the duration and will refuse it. The gallery picker
-      re-encodes it. Only the Files picker in the app works.</span></div></label>
+    <label class="opt" style="background:#fff3d6${p.hdr?';opacity:.65':''}"><input type="checkbox" id="patch"${p.hdr?' disabled':''}>
+      <div>${p.hdr
+        ? `Duration patch — <em>not available for HDR files</em>
+           <span><b>⚠ Tested result:</b> a duration-patched HDR file does not <b>render</b> as HDR in
+           TikTok's player. The HDR data itself survives their pipeline — but playback never switches
+           into HDR mode for a file whose header reads 00:00. The patch is for SDR content only.</span>`
+        : `Duration patch — <em>this is what the paid tools sell</em>
+           <span>Sets the movie-header duration to 1 tick, so the file shows <b>00:00</b> everywhere.
+           That is the expected result, not a fault.
+           <br><br><b>⚠ A patched file MUST be uploaded from the phone app using "Files" / attach.</b>
+           TikTok Studio on desktop validates the duration and will refuse it. The gallery picker
+           re-encodes it. Only the Files picker in the app works.</span>`}</div></label>
     <div id="patchwarn" class="verdict v-bad hide" style="font-size:13.5px">
       📎 <b>Patched file — desktop upload will be refused.</b>
       Move it to your phone, open TikTok, tap <b>+</b>, then <b>Files / attach</b> — not the gallery.
@@ -251,10 +257,18 @@ function show(){
   </div>`:''}`;
 
   $('#run').onclick = run;
-  const pw = $('#patchwarn'), pc = $('#patch');
-  if (pc && pw) pc.onchange = () => pw.classList.toggle('hide', !pc.checked);
-  if (!fixable) $('#run').disabled = !$('#patch').checked;
-  $('#patch').onchange = e => { if (!fixable) $('#run').disabled = !e.target.checked; };
+  const pw = $('#patchwarn'), pc = $('#patch'), nc = $('#nodv');
+  // Run stays clickable when something will actually change: a container fix,
+  // the (SDR-only) duration patch, or the opt-in strip-DV.
+  const syncRun = () => {
+    if (!fixable) $('#run').disabled = !((pc && !pc.disabled && pc.checked) || (nc && nc.checked));
+  };
+  if (pc) pc.onchange = () => {
+    if (pw) pw.classList.toggle('hide', !pc.checked);
+    syncRun();
+  };
+  if (nc) nc.onchange = syncRun;
+  syncRun();
 }
 
 function checklist(patched){

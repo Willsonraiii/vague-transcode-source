@@ -38,7 +38,7 @@ container layout changes, so the file size is identical:
 | QuickTime → MP4 | `ftyp` major brand `qt  ` → `mp42` |
 | Edit lists | `edts` renamed to `free` so readers skip it |
 | Strip Dolby Vision | `dvcC` → `free` *(off by default — see HANDOFF)* |
-| Duration patch | `mvhd` duration → 1 tick, shows 00:00 *(opt-in)* |
+| Duration patch | `mvhd` duration → 1 tick, shows 00:00 *(opt-in · SDR only — refused on HDR input, see HANDOFF §2.3b)* |
 
 **Transcodes** (CLI only) — 4K → 1080p while preserving Dolby Vision, via
 `dovi_tool` extract → encode → inject → verify.
@@ -107,7 +107,7 @@ bash test/run-all.sh
 ```
 engine  14 · probe  34 · remux  12 · duration patch  13
 rebrand + edit lists  10 · strip Dolby Vision  11
-website  36 · extension  21        (real Chromium)
+website  38 · extension  23        (real Chromium)
 ```
 
 Browser suites need:
@@ -134,7 +134,9 @@ sudo apt install -y xvfb libnspr4 libnss3 libasound2t64 libatk1.0-0t64 \
 ```
 
 ⚠️ A duration-patched file **cannot** be uploaded from TikTok Studio on desktop —
-it will be refused. Phone app with Files/attach only.
+it will be refused. Phone app with Files/attach only. And the patch is **SDR-only**:
+a patched HDR file stops *rendering* as HDR in TikTok's player (HANDOFF §2.3b),
+so every surface refuses that combination now.
 
 ---
 

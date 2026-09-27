@@ -90,6 +90,7 @@ chk('panel shows held state', /upload held/i.test(ptext));
 chk('panel probed the file', /1080|60/.test(ptext));
 chk('detected Dolby Vision', /dolby vision/i.test(ptext));
 chk('offers plain-HDR option', await page.locator('#vg-nodv').count() > 0);
+chk('duration patch hidden for HDR (§2.3b)', (await page.locator('#vg-zero').count()) === 0);
 chk('offers an action button', await page.locator('.vg-fix').count() > 0);
 
 console.log('\n── 5. Release sends the fixed file through ──');
@@ -119,6 +120,7 @@ await p2.goto('https://www.tiktok.com/tiktokstudio/upload', { waitUntil: 'domcon
 await p2.waitForTimeout(2000);
 await p2.setInputFiles('#up', path.join(HERE, 'e_rot90.mp4'));
 await p2.waitForTimeout(3000);
+chk('duration patch offered for SDR (§2.3b)', (await p2.locator('#vg-zero').count()) > 0);
 const cancel = p2.locator('.vg-cancel');
 if (await cancel.count()) {
   await cancel.click();

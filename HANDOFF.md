@@ -25,7 +25,8 @@ earlier phase of this project wrongly assumed it was commercial.
 **GitHub:** `Willsonraiii/vague-transcode`
 **Live site:** https://willsonraiii.github.io/vague-transcode/
 **Local repo on Windows:** `C:\Users\Admin\Projects\original` ← note: folder name
-does NOT match the repo name. This caused repeated confusion.
+does NOT match the repo name. This caused repeated confusion. Also: the owner
+changes machines — treat GitHub, not any local checkout, as current.
 
 ---
 
@@ -50,23 +51,30 @@ sites. **Do not re-derive these from first principles — they were verified.**
 | Desktop web upload = **one** compression pass. Phone gallery upload = **two** | |
 | Max upload: 287.6 MB mobile / **4 GB desktop web** | |
 
-### 2.2 The Dolby Vision finding ⭐
+### 2.2 The Dolby Vision finding ⭐ → **REVERSED**
 
-**Deliver as plain HDR, not Dolby Vision.**
+**Deliver as Dolby Vision, not plain HDR.** (This section originally claimed the
+opposite. The reversal is real and tested — see below.)
 
-The owner compared real TikTok videos and found the ones that looked correct
-were tagged **HDR**, not Dolby Vision.
+The original reasoning: DV **profile 8.4 is an HLG base layer plus an RPU**.
+All the HDR lives in the base layer; the RPU only adds dynamic metadata — so
+removing the DV signalling should "lose nothing visible". The evidence was that
+TikTok videos which looked correct were tagged **HDR**, not DV.
 
-Why this works: DV **profile 8.4 is an HLG base layer plus an RPU**. All the HDR
-lives in the base layer; the RPU only adds dynamic metadata. Removing the DV
-signalling loses nothing visible and avoids whatever TikTok does differently
-when it sees a DV file.
+**That evidence was a misreading:** the "HDR" tag on other people's videos
+describes what TikTok **delivers**, not what they **uploaded**. And when
+strip-DV was briefly ON by default, **HDR stopped surviving upload**. TikTok
+may use the Dolby Vision box to route a file into its HDR pipeline at all.
 
-Implementation: rename `dvcC`/`dvvC`/`dvwC` boxes to `free` and retag
-`dvh1`/`dvhe` sample entries to `hvc1`/`hev1`. Same byte length → no chunk
-offsets move → **completely lossless**.
+**Strip-DV is now OFF on every surface** — opt-in and marked "testing only":
+website `#nodv`, extension `#vg-nodv`, CLI `--no-dv`.
 
-This is ON by default whenever DV is detected.
+Implementation (kept — it is genuinely lossless): rename `dvcC`/`dvvC`/`dvwC`
+boxes to `free` and retag `dvh1`/`dvhe` sample entries to `hvc1`/`hev1`. Same
+byte length → no chunk offsets move.
+
+Still open: a proper A/B test (one upload with, one without) has never been
+run — see §8.2.
 
 ### 2.3 The duration patch ⭐
 
@@ -109,8 +117,11 @@ movie-header duration reads 00:00. HDR playback needs valid duration metadata.
 | HDR | ❌ never — you lose HDR rendering |
 | SDR | ✅ fine |
 
-All three surfaces now refuse the patch on HDR files (CLI exits unless
-`--force-patch`; the website disables the checkbox; the extension hides it).
+All three surfaces refuse the patch on HDR files: the CLI exits unless
+`--force-patch` (or `--sdr` on the **transcode** path, where the output really
+is SDR — a remux copies streams, so `--sdr` rescues nothing there); the website
+disables the checkbox with an explanation; the extension replaces the option
+with a note.
 
 This also proves the patch genuinely changes TikTok's behaviour — it is not
 placebo. It is simply incompatible with HDR.
@@ -278,8 +289,8 @@ UNIT
   strip Dolby Vision     11 passed
 
 END-TO-END (real Chromium, via xvfb)
-  website                36 passed
-  extension              21 passed
+  website                38 passed
+  extension              23 passed
 ```
 
 Run everything: `bash test/run-all.sh`
@@ -310,6 +321,8 @@ user clicks. That is the core behaviour of the extension.
 | Output judder, 9.98s vs 10.00s | raw Annex B has no timestamps; ffmpeg regenerated them and lost the B-frame reorder delay | mux with **MP4Box**, which builds correct CTS/DTS tables |
 | Duration patch broke uploads | zeroed `tkhd` + `mdhd` too | `mvhd` only, value **1** not 0 |
 | Website "downloaded the same file" | `faststartRemux` returned early on already-faststart files, skipping the patch | early return only when there is genuinely nothing to do |
+| Website patch-warning banner never appeared | `$('#patch').onchange` was assigned twice — the second assignment silently replaced the banner toggle | one combined handler; `#run` enablement now tracks both `#patch` and `#nodv` |
+| Website e2e failed 2 checks after the strip-DV revert | the test still asserted the old default (strip-DV pre-ticked), so the DV fixture produced no download | test updated: asserts OFF-by-default, ticks `#nodv` explicitly; also asserts the §2.3b patch refusal |
 | CLI scope errors (`ENCODER`/`GPU` undefined) | a `function main(){}` wrapper trapped the flag declarations | wrapper removed — CommonJS allows top-level `return` |
 
 ---
@@ -338,8 +351,9 @@ Pattern: I reasoned from how systems *should* work. The owner tested how this on
 ```
 1. Shoot/export 1080p60 HDR — not 4K
 2. Transfer to PC losslessly (iPhone: "Keep Originals" + USB)
-3. Process:  ./vague.sh clip.mp4 --remux-only --no-dv --patch
-   or the website / extension with the same options
+3. HDR file:  ./vague.sh clip.mp4 --remux-only        (keep DV, no patch)
+   SDR file:  ./vague.sh clip.mp4 --remux-only --patch   (patch optional)
+   or the website / extension — the same rules are enforced there
 4. Move back to the phone losslessly
 5. TikTok app → +  → "Files" / attach     ← NEVER the gallery
 6. "Allow high-quality uploads" ON · post public
@@ -348,6 +362,8 @@ Pattern: I reasoned from how systems *should* work. The owner tested how this on
 ```
 
 ⚠️ If `--patch` is used, **desktop upload will be refused**. Phone + Files only.
+And **never patch an HDR file** — all three surfaces now refuse it (§2.3b):
+the HDR data survives TikTok's pipeline but the player won't render it as HDR.
 
 ---
 
@@ -416,3 +432,7 @@ Kept so a new assistant doesn't repeat a dead end.
 - Prefers being shown the command to run over long explanations
 - Will push back hard on anything that doesn't work; take it seriously and test
   rather than explain
+- **Changes machines constantly.** GitHub is the single source of truth — never
+  leave work only in a local checkout, a patch file, or an agent sandbox:
+  commit and push before ending a session, and `git fetch origin` before
+  starting one. Don't rely on any file existing on any particular machine.

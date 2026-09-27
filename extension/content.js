@@ -239,11 +239,15 @@
       <input type="checkbox" id="vg-nodv"> <b>Strip Dolby Vision</b> (off — testing only)
       <span>⚠ Leave OFF. HDR stopped surviving upload while this was on — TikTok may need the
       Dolby Vision box to treat the file as HDR at all.</span></label>`);
-    if (!parseFailed) btns.push(`<label class="vg-opt" style="background:#fff3d6">
+    if (!parseFailed && !probe?.hdr) btns.push(`<label class="vg-opt" style="background:#fff3d6">
       <input type="checkbox" id="vg-zero"> <b>Duration patch</b>
       <span>⚠ A patched file CANNOT be uploaded here — TikTok Studio on desktop refuses it.
       Use it only if you will move the file to your phone and attach it via "Files" in the app.
       Shows 00:00 everywhere, which is expected.</span></label>`);
+    else if (!parseFailed) btns.push(`<div class="vg-opt" style="background:#fff3d6;opacity:.65">
+      <b>Duration patch — not for HDR files</b>
+      <span>⚠ Tested: a patched HDR file does not render as HDR in TikTok's player (the data
+      survives their pipeline; playback never enters HDR mode for a 00:00 file). SDR only.</span></div>`);
 
     btns.push(`<button class="vg-fix vg-cancel" data-act="cancel">Cancel</button>`);
     host.innerHTML = btns.join('');

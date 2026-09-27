@@ -56,8 +56,10 @@ chk('shows resolution 1080×1920', text.includes('1080×1920'));
 chk('shows 60 fps', /60\s*fps/.test(text));
 chk('detects Dolby Vision', text.includes('Dolby Vision'));
 chk('offers the plain-HDR option', await page.locator('#nodv').count() > 0);
-chk('plain-HDR is pre-ticked', await page.locator('#nodv').isChecked());
+chk('plain-HDR is OFF by default (reverted — HANDOFF §8.2)', !(await page.locator('#nodv').isChecked()));
+chk('duration patch refused for HDR (§2.3b)', await page.locator('#patch').isDisabled());
 chk('raw probe present', text.toLowerCase().includes('raw probe'));
+await page.locator('#nodv').check();   // opt in, so the fix has something to do
 
 /* ------------------------------------------------------- 3. run the fix */
 console.log('\n── 3. Click Fix and capture the download ──');
@@ -92,6 +94,7 @@ console.log('\n── 4. SDR file routes to desktop ──');
 await load();
 await page.setInputFiles('#file', path.join(HERE, 'e_rot90.mp4'));
 await page.waitForSelector('#run', { timeout: 15000 });
+chk('duration patch available for SDR (§2.3b)', await page.locator('#patch').isEnabled());
 await page.locator('#patch').check();
 const dl2 = page.waitForEvent('download', { timeout: 30000 });
 await page.locator('#run').click();
