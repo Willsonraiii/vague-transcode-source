@@ -32,6 +32,10 @@
  *                       variants of the input (post them all the same way,
  *                       then compare what TikTok delivered)
  *   --method            the 60/120fps method: divide mvhd+mdhd timescale by 2
+ *   --ffmpeg-method     the full creator recipe in one flag: true x265 re-encode
+ *                       (10-bit HLG / high bitrate) + 1080p cap + fps method +
+ *                       isom/ts-19200 signature — same command the website's
+ *                       method script generates
  *                       (60fps) or 4 (120fps) so TikTok's encoder reads half
  *                       the frame rate and decimates nothing. Lossless, keeps
  *                       real duration (no 00:00) and works on HDR. This is the
@@ -77,6 +81,7 @@ const platform  = opt('platform', 'tiktok');
 const DRY       = flag('dry-run');
 const KEEP4K    = flag('keep-4k');
 const DOWN1080  = flag('1080p');
+const FFMPEG_M  = flag('ffmpeg-method');   // the full creator recipe: x265 re-encode + 1080p cap + fps method + signature
 const FORCE_SDR = flag('sdr');
 const PATCH_AGG = flag('patch-aggressive');
 const PATCH     = flag('patch') || PATCH_AGG;
@@ -413,7 +418,7 @@ async function probeSource(file, tools) {
       if (pct !== last) { process.stderr.write(`\r  ${label}… ${pct}%   `); last = pct; }
     }, { zeroDuration: PATCH ? (PATCH_AGG ? 'aggressive' : true) : false,
          rebrand: true, stripEdits: true, stripDV: NO_DV,
-         fpsGuard: METHOD && src.fps > 48 ? (src.fps > 90 ? 4 : 2) : 0,
+         fpsGuard: (METHOD || FFMPEG_M) && src.fps > 48 ? (src.fps > 90 ? 4 : 2) : 0,
          isoSignature: true });
     if (PATCH) {
       say(`\n  ${C.y}${C.B}⚠ PATCHED FILE — one valid upload route only:${C.x}`);
@@ -470,7 +475,7 @@ async function probeSource(file, tools) {
   // ---- plan ---------------------------------------------------------------
   const p = plan({ ...src, path: input, outPath }, platform, {
     uploadPath: 'web',
-    force1080: DOWN1080,              // optional: TikTok accepts 4K now
+    force1080: DOWN1080 || FFMPEG_M,  // optional: TikTok accepts 4K now (--ffmpeg-method caps to 1080p)
     preconditioning: !src.hdr,           // never denoise/sharpen an HDR master
   });
   const o = p.output;

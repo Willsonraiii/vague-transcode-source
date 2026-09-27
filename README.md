@@ -117,7 +117,8 @@ bash test/run-all.sh
 ```
 engine  17 · probe  34 · remux  12 · duration patch  13 · frame-rate method  13
 rebrand + edit lists  10 · strip Dolby Vision  11 · tiktok signature  15
-website  59 · extension  25        (real Chromium)
+ffmpeg method script     32
+website  66 · extension  25        (real Chromium)
 ```
 
 Browser suites need:

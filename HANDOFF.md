@@ -439,8 +439,8 @@ cli/
 
 test/
   run-all.sh         runs everything
-  *-test.mjs         8 unit suites (125 assertions)
-  e2e-site.mjs       59 checks in real Chromium
+  *-test.mjs         9 unit suites (157 assertions)
+  e2e-site.mjs       66 checks in real Chromium
   e2e-extension.mjs  25 checks, extension loaded for real
   *.mp4              synthetic fixtures
 
@@ -753,6 +753,7 @@ file-side work will change it.
 | 30 | **A/B/C null result**: no variant (method / plain-HLG / untouched) delivered visible HDR. Tool + method + DV-vs-HLG all exonerated. Remaining: source validity, route (share sheet untested), account gating (HQ-uploads setting). Next: share-sheet test with a confirmed-HDR source. |
 | 31 | **Signature matching shipped** (28 Sept): measured delivered-file fingerprints (brand `isom`, video ts=19200, plain HLG) now applied by default on site/CLI/extension. Engine: `isoTimescale` exact-integer rescale (×32 for iPhone ts=600), non-integral skipped safely, byte-identical. Order note: iso runs BEFORE fpsGuard by design (guard-then-iso would rescale deltas and undo the declared-fps trick) — unguarded files land exactly 19200, method files 19200/div. Tests: signature suite 15 new, rebrand expectations isom. Next: one Studio post with the full recipe, measure feed rendition. |
 | 32 | **Signature post measured — ladder went DOWN, not up** (28 Sept, post 7690293814807907591, NP, ~10 min after publish): feed serves a GENUINE TikTok encode (isom, video ts=15360, audio 44.1k, edit list — their muxer, not an echo) at **576×1024 · h264 · 8-bit · bt709 SDR · 30fps · 0.8 Mbps** — lowest rung ever measured (previous bottom: 720p30 2.9). `hdplay` (HD rendition) never appeared; creator HDR posts all had it. Stable across 3 fetches over 10 min. Conclusion: the file side is now provably creator-grade (his upload carried isom/ts19200/plain HLG — same fingerprint as delivered creator HDR files), yet the ladder decision didn't move → **the gate is account/serving-side** (HQ-uploads/Data-Saver toggles still unconfirmed; zero-view test posts; NP region vs KZ creators). Bonus fingerprint: TikTok's 30fps h264 rung uses ts=15360 = 512×30, confirming the per-fps timescale convention behind our 19200 = 320×60. |
+| 33 | **FFMPEG method shipped to the website** (28 Sept, owner directive: "they were using FFMPEG method — duration zero, HDR, high quality, fps"): new card generates the exact creator command for the probed file — true x265 re-encode, 10-bit HLG (bt2020/arib-std-b67/bt2020nc, main10), 20 Mbps, scale-capped 1080×1920 (never upscaled), `-video_track_timescale` 19200@60fps / 15360@30fps (measured convention), aac 192k 44.1k, hvc1, faststart, metadata stripped — wrapped in drag-and-drop scripts (.bat winget auto-install / .command brew / .sh) + copy-command + `--ffmpeg-method` CLI alias. SDR sources stay bt709 8-bit (never fake HDR). **Dead end recorded: browser ffmpeg cannot do this** — @ffmpeg/core lists libx265 but it deadlocks on the first frame (tested 45-90s timeouts, pools=none/wpp=0 no help; x264 runs fine — it is x265's threading model). Duration-zero deliberately NOT in the script (ffmpeg cannot write it; our lossless patch exists in the Fix flow, and 00:00 is post-blocked anyway). Pipeline: script (encode) → optional site Fix (patch/signature) → Studio. |
 - Will push back hard on anything that doesn't work; take it seriously and test
   rather than explain
 - **Changes machines constantly.** GitHub is the single source of truth — never

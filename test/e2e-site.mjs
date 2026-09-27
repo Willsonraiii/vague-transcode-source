@@ -64,6 +64,24 @@ chk('patch label carries the Sept 2026 post-block warning', /fail to post|cannot
 chk('60/120fps method offered (60fps file)', await page.locator('#method').count() > 0);
 chk('method pre-ticked (default on)', await page.locator('#method').isChecked());
 chk('raw probe present', text.toLowerCase().includes('raw probe'));
+/* ------------------------------------------- 2b. FFMPEG-method card */
+console.log('\n── 2b. FFMPEG method card ──');
+chk('method card rendered', (await page.locator('#dlmethod').count()) > 0);
+const mlbl = await page.locator('#dlmethod').innerText();
+chk('button names the detected platform', /\(Windows\)|\(macOS\)|\(Linux\)/.test(mlbl), `  ${mlbl}`);
+const mcmd = await page.locator('#methodcmd').textContent();
+chk('command preview shows the recipe', /libx265/.test(mcmd) && /arib-std-b67/.test(mcmd) && /19200/.test(mcmd));
+{
+  const dl2 = page.waitForEvent('download', { timeout: 10000 });
+  await page.locator('#dlmethod').click();
+  const d2 = await dl2;
+  const mscript = readFileSync(await d2.path(), 'utf8');
+  chk('script downloads with platform name', /vague-method\.(bat|command|sh)$/.test(d2.suggestedFilename() || ''), `  ${d2.suggestedFilename()}`);
+  chk('script = true x265 method', /libx265/.test(mscript) && /p010le/.test(mscript) && /hvc1/.test(mscript));
+  chk('script = TikTok timescale + caps + faststart', /video_track_timescale 19200/.test(mscript) && /min\(iw,1080\)/.test(mscript) && /\+faststart/.test(mscript));
+  chk('script auto-installs ffmpeg if missing', /winget|brew|apt install ffmpeg/.test(mscript));
+}
+
 await page.locator('#nodv').check();   // opt in, so the fix has something to do
 
 /* ------------------------------------------------------- 3. run the fix */

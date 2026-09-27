@@ -15,6 +15,7 @@ run "node test/rebrand-test.mjs"     "rebrand + edit lists"
 run "node test/stripdv-test.mjs"     "strip Dolby Vision"
 run "node test/method-test.mjs"      "frame-rate method"
 run "node test/signature-test.mjs"   "tiktok signature"
+run "node test/method-script-test.mjs" "ffmpeg method script"
 
 echo; echo "  END-TO-END (real Chromium)"
 if command -v xvfb-run >/dev/null && [ -d node_modules/playwright-core ]; then
