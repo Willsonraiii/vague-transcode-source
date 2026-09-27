@@ -48,6 +48,11 @@ preserving Dolby Vision, via `dovi_tool` extract → encode → inject → verif
 **Verifies** — download your post back from TikTok and compare what you sent
 against what they served.
 
+**Experiments** — one-click A/B kit for HDR files: writes method-only,
+plain-HDR and untouched variants (site) or `./vague.sh clip.mp4 --remux-only
+--kit` (CLI). Post them all the same way and let the delivered files tell you
+which recipe your account rewards.
+
 ---
 
 ## The honest part
@@ -112,7 +117,7 @@ bash test/run-all.sh
 ```
 engine  17 · probe  34 · remux  12 · duration patch  13 · frame-rate method  13
 rebrand + edit lists  10 · strip Dolby Vision  11
-website  49 · extension  24        (real Chromium)
+website  56 · extension  24        (real Chromium)
 ```
 
 Browser suites need:

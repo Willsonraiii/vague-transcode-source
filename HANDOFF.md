@@ -458,7 +458,7 @@ UNIT
   frame-rate method      13 passed
 
 END-TO-END (real Chromium, via xvfb)
-  website                49 passed
+  website                56 passed
   extension              24 passed
 ```
 
@@ -546,6 +546,15 @@ the HDR data survives TikTok's pipeline but the player won't render it as HDR.
 the TikTok feed.** Status: smooth ✅ (frame-rate method, measured), HDR
 pipeline entered ✅ (slow first render), visible HDR ❌ — the last third.
 
+**Instrument (built, Sept 2026): the A/B test kit.** Site button (HDR files)
+and CLI `--kit` write three variants of the same clip:
+`-A-method` (timescale method only, DV kept) · `-B-plainHDR` (method + DV
+signalling stripped → plain HLG) · `-C-untouched` (original bytes). Post all
+three the same way (Studio "Only me" → app flip), then read the decoder:
+A-HDR = done · B-only = plain HLG required (engine default flips) · C-only =
+our remux hurts (bug hunt) · none = route/source-format variables. This is
+§8.4's variant generator, focused on the goal.
+
 **Decision tree — one download-back of the current test post decides:**
 - delivered colour = **bt709 / 8-bit** → TikTok tonemapped it. Next levers:
   source codec (HEVC DV, never H.264), 4K60 upload (better ladder), route.
@@ -581,8 +590,9 @@ Remaining:
    unmeasured.
 
 4. **Unexplored levers:** `btrt` declared bitrate, keyframe/`stss` density,
-   resolution bucket edges, uploading AV1. A variant generator (one field changed
-   per file, post them all, compare) was proposed but never built.
+   resolution bucket edges, uploading AV1. ✅ The variant generator is BUILT in
+   focused form (A/B kit, see §8 header) — extend it if these levers need
+   testing.
 
 5. **What does the gallery-only upload route actually deliver?** The app has
    no Files picker (§2.4 update). Old claim: gallery = re-encoded 30fps SDR
@@ -643,7 +653,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 26 | **Owner pre-test observations**: creators' 00:00-patched files DO show full visible HDR in-feed (00:00+HDR works in the wild); TikTok shows no HDR tag — HDR is judged by the visible effect, not a badge ("badge" wording corrected across surfaces). Owner running the Studio-flip / method test next. |- Wants real working software, not specs or mockups
 | 27 | **Method's first measured result**: 60fps preserved ✅ (timescale patch works on our account), slower first render ✅ (HDR pipeline entered — previous posts skipped it), visible HDR ❌ ("a bit brighter, not HDR"). Diagnosis table recorded at §2.9 — one download-back (colour tags + bitrate) discriminates SDR-tonemap vs starved-HDR vs HLG-source. |- Wants all three surfaces at feature parity (website and extension must not lag
 | 28 | **00:00 patch is dead on both routes after the TikTok update** (owner screenshot: post screen, `-patched.mp4`, no duration, can't publish). Studio already refused; now the app blocks posting. All surfaces relabel the patch "likely broken — Sept 2026 update"; frame-rate method unaffected (real duration). Matches vague-infinity's "NOVA updated" scramble. |  the CLI)
-- Prefers being shown the command to run over long explanations
+| 29 | **A/B test kit built** (site `#abkit` + CLI `--kit`): writes -A-method / -B-plainHDR / -C-untouched variants for HDR sources — the instrument that finds this account's HDR recipe in one posting session. Motivation: every prior HDR belief was confounded by the gallery route (incl. the strip-DV revert — same confound as §2.3b). Website 56/56. |- Prefers being shown the command to run over long explanations
 - Will push back hard on anything that doesn't work; take it seriously and test
   rather than explain
 - **Changes machines constantly.** GitHub is the single source of truth — never
