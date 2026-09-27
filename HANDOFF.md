@@ -318,8 +318,14 @@ serves/stores those files with the degenerate structure intact.
 `#vg-method` / `--method`). Unit suite: `test/method-test.mjs` (13 checks:
 timescale halved, real duration preserved, declared fps 30, frame count
 intact, DV kept, byte-identical, works with moov-move).
-**Not yet owner-tested against TikTok** — the decisive post: one file with
-the method, one without.
+**First owner result (27 Sept 2026, method file):** post plays **smooth 60fps
+(the method WORKS on our account)** and the **first render is slower — the HDR
+pipeline ran** (previous posts played instantly = pipeline skipped). BUT the
+output is "a bit brighter, not real HDR" — the owner can identify true HDR on
+their screen and this isn't it. Open diagnosis, one download-back discriminates:
+(a) TikTok tonemapped to SDR + brightness boost → delivered file reads bt709
+8-bit; (b) real HDR format, bitrate-starved → 10-bit PQ/HLG tags + low Mbps;
+(c) source was HLG not DV → check the uploaded file's tags in the compare.
 
 ### 2.10 The Studio "Only me" → app-flip route ⭐ (community-verified, untested by us)
 
@@ -598,7 +604,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 24 | **Owner: HDR is the main target — others patch HDR, we refused it.** §2.3b block LIFTED on all surfaces (patch on HDR = experimental + confound note: the failed test went through the gallery, which re-encodes; creators' patched HDR delivers). CLI `--patch --method` on HDR now builds the full paid-method file (1-tick + timescale ÷2 + DV kept, byte-identical). Clean A/B recorded at §8.7. |
 | 25 | **Studio "Only me" → flip-to-Everyone route** relayed by the owner from creator sites: desktop upload as private, flip visibility in the app — keeps 60fps/1080p/HDR/HEVC. It's a file route (no gallery re-encode) whose app-side flip reconciles the old "desktop HDR = SDR" observation; pairs with the frame-rate method (real duration passes Studio validation). All surfaces updated; checklist's "never Only me" line made route-dependent (§2.10). |- Personal use — no monetisation advice
 | 26 | **Owner pre-test observations**: creators' 00:00-patched files DO show full visible HDR in-feed (00:00+HDR works in the wild); TikTok shows no HDR tag — HDR is judged by the visible effect, not a badge ("badge" wording corrected across surfaces). Owner running the Studio-flip / method test next. |- Wants real working software, not specs or mockups
-- Wants all three surfaces at feature parity (website and extension must not lag
+| 27 | **Method's first measured result**: 60fps preserved ✅ (timescale patch works on our account), slower first render ✅ (HDR pipeline entered — previous posts skipped it), visible HDR ❌ ("a bit brighter, not HDR"). Diagnosis table recorded at §2.9 — one download-back (colour tags + bitrate) discriminates SDR-tonemap vs starved-HDR vs HLG-source. |- Wants all three surfaces at feature parity (website and extension must not lag
   the CLI)
 - Prefers being shown the command to run over long explanations
 - Will push back hard on anything that doesn't work; take it seriously and test
