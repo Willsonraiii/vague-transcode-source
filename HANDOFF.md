@@ -592,8 +592,18 @@ confirms it was a `-patched` file that DID post (pre-update or per-route).
 **NEXT (single highest-value action): owner checks Settings → Content
 preferences → "Allow high-quality uploads" — if OFF, that alone explains
 every null result tonight. Then ONE normal post; agent re-measures the
-delivery. If still 720p30 with the setting ON → deeper account/region
+delivery. If still bottom-rung with the setting ON → deeper account/region
 gating (NP vs KZ cohorts) — file-side work is complete and correct.**
+
+**SIGNATURE POST RESULT (28 Sept, post 7690293814807907591):** measured 3×
+over 10 min — 576×1024 h264 8-bit SDR 30fps 0.8 Mbps, genuine TikTok encode,
+NO hdplay rendition. File-side now fully creator-grade and it did not move the
+ladder → the gate is account/serving-side. Remaining levers, in order:
+(1) "Allow high-quality uploads" ON / Data Saver OFF (owner's app — still
+unconfirmed, 30-second check); (2) zero-view posts may get cheap renditions
+(adaptive quality) — a real public post with some views is the honest test;
+(3) NP account vs KZ creators — if (1) and (2) check out, region/account-tier
+gating is the conclusion and the tool has done everything a file can do.
 
 **A/B/C RESULT (owner, 27 Sept 2026): NO variant showed visible HDR.**
 A (method, DV kept) ✗ · B (method, plain HLG) ✗ · C (untouched original) ✗.
@@ -742,6 +752,7 @@ file-side work will change it.
 | 29 | **A/B test kit built** (site `#abkit` + CLI `--kit`): writes -A-method / -B-plainHDR / -C-untouched variants for HDR sources — the instrument that finds this account's HDR recipe in one posting session. Motivation: every prior HDR belief was confounded by the gallery route (incl. the strip-DV revert — same confound as §2.3b). Website 56/56. |- Prefers being shown the command to run over long explanations
 | 30 | **A/B/C null result**: no variant (method / plain-HLG / untouched) delivered visible HDR. Tool + method + DV-vs-HLG all exonerated. Remaining: source validity, route (share sheet untested), account gating (HQ-uploads setting). Next: share-sheet test with a confirmed-HDR source. |
 | 31 | **Signature matching shipped** (28 Sept): measured delivered-file fingerprints (brand `isom`, video ts=19200, plain HLG) now applied by default on site/CLI/extension. Engine: `isoTimescale` exact-integer rescale (×32 for iPhone ts=600), non-integral skipped safely, byte-identical. Order note: iso runs BEFORE fpsGuard by design (guard-then-iso would rescale deltas and undo the declared-fps trick) — unguarded files land exactly 19200, method files 19200/div. Tests: signature suite 15 new, rebrand expectations isom. Next: one Studio post with the full recipe, measure feed rendition. |
+| 32 | **Signature post measured — ladder went DOWN, not up** (28 Sept, post 7690293814807907591, NP, ~10 min after publish): feed serves a GENUINE TikTok encode (isom, video ts=15360, audio 44.1k, edit list — their muxer, not an echo) at **576×1024 · h264 · 8-bit · bt709 SDR · 30fps · 0.8 Mbps** — lowest rung ever measured (previous bottom: 720p30 2.9). `hdplay` (HD rendition) never appeared; creator HDR posts all had it. Stable across 3 fetches over 10 min. Conclusion: the file side is now provably creator-grade (his upload carried isom/ts19200/plain HLG — same fingerprint as delivered creator HDR files), yet the ladder decision didn't move → **the gate is account/serving-side** (HQ-uploads/Data-Saver toggles still unconfirmed; zero-view test posts; NP region vs KZ creators). Bonus fingerprint: TikTok's 30fps h264 rung uses ts=15360 = 512×30, confirming the per-fps timescale convention behind our 19200 = 320×60. |
 - Will push back hard on anything that doesn't work; take it seriously and test
   rather than explain
 - **Changes machines constantly.** GitHub is the single source of truth — never
