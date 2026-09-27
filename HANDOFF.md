@@ -243,6 +243,10 @@ site/                ← this is the GitHub Pages repo content
   index.html         the tool: diagnose → fix → checklist → compare
   privacy.html terms.html _style.css README.md .nojekyll
   lib/               copies of the 4 engine modules
+                     LIVE DEPLOY: served from the separate repo
+                     Willsonraiii/vague-transcode — run ./deploy-site.sh
+                     (repo root) to push site/ there. Editing site/ here
+                     changes nothing for users until that runs.
 
 cli/
   vague.js           v7 — the CLI
@@ -436,3 +440,5 @@ Kept so a new assistant doesn't repeat a dead end.
   leave work only in a local checkout, a patch file, or an agent sandbox:
   commit and push before ending a session, and `git fetch origin` before
   starting one. Don't rely on any file existing on any particular machine.
+  If `site/` changed, also run `./deploy-site.sh` — the live tool is served
+  from a separate repo and does not update otherwise.

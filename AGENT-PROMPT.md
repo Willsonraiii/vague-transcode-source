@@ -98,4 +98,6 @@ off by default. Two uploads — one with, one without — would settle it.
   files, folder paths, or patch files to apply later — commit and push to
   GitHub before ending a session. The repo is the only thing that follows
   them between machines; everything local (including the Windows checkout at
-  `C:\Users\Admin\Projects\original`) may be stale or absent.
+  `C:\Users\Admin\Projects\original`) may be stale or absent. If `site/`
+  changed, deploy with `./deploy-site.sh` (repo root) — the live tool is
+  served from the separate Pages repo `Willsonraiii/vague-transcode`.
