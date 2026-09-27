@@ -636,6 +636,21 @@ Remaining:
    do that we don't. Their free tier offers nothing we lack (server upload,
    gated guides, SDR-only browser mode).
 
+6. ✅ **RESOLVED (27 Sept 2026, agent-measured).** Downloaded the Nova
+   example post (vt.tiktok.com/ZSbdQVqav — "latest method", Indonesian post
+   tagged #dolbyvision #hdr #transcode) via tikwm and probed it with OUR
+   engine. **What TikTok actually delivers for a working HDR method post:**
+   HEVC 10-bit · **bt2020 / HLG (arib-std-b67) / bt2020nc** · **Dolby Vision
+   STRIPPED by TikTok's own re-encode** · 60 fps CFR · **18.9 Mbps** ·
+   1080×1920 · isom/faststart. THE TARGET SIGNATURE. Implications:
+   (a) the working delivered format is PLAIN HLG — DV does not survive their
+   encode; (b) a high-bitrate HDR rendition exists on the ladder (≥18 Mbps);
+   (c) 1080p60 HDR is a real deliverable. Region of that post: Indonesia.
+   NEXT: agent can measure ANY public post the same way (tikwm API + our
+   probe) — get the owner's post link and diff their delivery against this
+   signature. If theirs is bt709/8-bit → account/route gating; if 10-bit HLG
+   too → it's playback-side (owner's device/surface), not delivery.
+
 6. **Measure the Nova example post** — https://vt.tiktok.com/ZSbdQVqav/
    ("latest method"). Download it and run the compare tool: what resolution,
    fps and colour does it actually deliver? Our audit of their claims is in
