@@ -246,8 +246,10 @@
       <span>⚠ Leave OFF. HDR stopped surviving upload while this was on — TikTok may need the
       Dolby Vision box to treat the file as HDR at all.</span></label>`);
     if (!parseFailed) btns.push(`<label class="vg-opt" style="background:#fff3d6">
-      <input type="checkbox" id="vg-zero"> <b>Duration patch</b>${probe?.hdr ? ' (experimental on HDR)' : ''}
-      <span>⚠ A patched file CANNOT be uploaded here — TikTok Studio on desktop refuses it.
+      <input type="checkbox" id="vg-zero"> <b>Duration patch</b> <b>(likely broken — Sept 2026 TikTok update)</b>
+      <span>⚠ Owner-tested after the update: the app's post screen shows no duration and the post
+      cannot be published. Prefer the 60/120 fps method — it keeps a real duration.
+      Also: a patched file CANNOT be uploaded here — TikTok Studio on desktop refuses it.
       Use it only if you will move the file to your phone and pass the file itself —
       the Files picker if your app has one, or the iOS share sheet (Files app → Share → TikTok).
       The gallery re-encodes it and rebuilds the duration. And keep patched files OUT of

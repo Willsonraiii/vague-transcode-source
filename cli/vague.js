@@ -321,11 +321,13 @@ async function probeSource(file, tools) {
   // Refuse the combination unless the output will actually be SDR (--sdr on
   // the transcode path — a remux copies streams, so --sdr rescues nothing
   // there) or the owner explicitly overrides (--force-patch).
-  if (PATCH && src.hdr) {
-    say(`\n  ${C.y}${C.B}⚠ EXPERIMENTAL: duration patch on an HDR file.${C.x}`);
-    say(`  ${C.y}Our one patched-HDR test did not render HDR in-app (§2.3b) — but it went through${C.x}`);
-    say(`  ${C.y}the gallery, which re-encodes, so that result was confounded. Creators' patched${C.x}`);
-    say(`  ${C.y}HDR files DO deliver full HDR in the feed. Proceeding — verify on your account.${C.x}`);
+  if (PATCH) {
+    say(`\n  ${C.y}${C.B}⚠ The 00:00 duration patch is likely BROKEN by TikTok's Sept 2026 update.${C.x}`);
+    say(`  ${C.y}Owner-tested: the app's post screen shows no duration and the post cannot be${C.x}`);
+    say(`  ${C.y}published; TikTok Studio refuses 00:00 files on upload. Kept for experimentation${C.x}`);
+    say(`  ${C.y}only. The frame-rate method (--method) keeps a real duration — unaffected.${C.x}`);
+    if (src.hdr)
+      say(`  ${C.y}(HDR note: the old §2.3b 'patch kills HDR' claim is confounded — see HANDOFF.)${C.x}`);
   }
 
   const dx = diagnose(src);

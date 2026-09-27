@@ -59,6 +59,7 @@ chk('offers the plain-HDR option', await page.locator('#nodv').count() > 0);
 chk('plain-HDR is OFF by default (reverted — HANDOFF §8.2)', !(await page.locator('#nodv').isChecked()));
 chk('duration patch offered for HDR (experimental)', await page.locator('#patch').isEnabled());
 chk('HDR patch warns about the §2.3b confound', /experimental on HDR/i.test(text) && /gallery/i.test(await page.locator('#patch').locator('..').innerText()));
+chk('patch label carries the Sept 2026 post-block warning', /fail to post|cannot be published/i.test(text));
 chk('60/120fps method offered (60fps file)', await page.locator('#method').count() > 0);
 chk('method pre-ticked (default on)', await page.locator('#method').isChecked());
 chk('raw probe present', text.toLowerCase().includes('raw probe'));
@@ -88,6 +89,8 @@ if (out) {
   chk('still HEVC', out.includes(Buffer.from('hvc1')));
   const after = await page.locator('#results').innerText();
   chk('UI reports what it did', /Dolby Vision signalling removed|plain HDR/i.test(after));
+  // the verify card is built async (re-probe of the output) — wait for it
+  await page.waitForSelector('#verify', { timeout: 20000 }).catch(() => {});
   chk('verification card rendered', await page.locator('#verify').count() > 0);
   const vtxt = await page.locator('#verify').innerText().catch(() => '');
   chk('verification proves byte-identity', /byte-identical/.test(vtxt));

@@ -103,6 +103,15 @@ timing so the media is valid.
 `--patch-aggressive` still exists (zeroes all three) purely for experimentation.
 It is known to break uploads.
 
+**POST-BLOCK (owner-tested, 27 Sept 2026 — TikTok update):** after the latest
+update, a patched file uploaded in the app reaches the post screen but CANNOT
+be posted — the post screen shows no duration for the upload (screenshot:
+`…-patched.mp4`, 00:00, post blocked). The 00:00 patch is now dead on BOTH
+routes (Studio refuses at upload; app refuses at post). Kept in the tool for
+experimentation only. Consistent with ecosystem churn: vague-infinity's
+"NOVA mode updated, updates coming" banner. **The frame-rate method (§2.9) is
+unaffected — it keeps a real duration.**
+
 **Gallery instability (owner-tested, Sept 2026):** importing a patched
 (00:00) file into iOS Photos can crash the gallery — Photos force-closed
 repeatedly until the file was removed. Downloads of a patched post that echo
@@ -633,7 +642,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 25 | **Studio "Only me" → flip-to-Everyone route** relayed by the owner from creator sites: desktop upload as private, flip visibility in the app — keeps 60fps/1080p/HDR/HEVC. It's a file route (no gallery re-encode) whose app-side flip reconciles the old "desktop HDR = SDR" observation; pairs with the frame-rate method (real duration passes Studio validation). All surfaces updated; checklist's "never Only me" line made route-dependent (§2.10). |- Personal use — no monetisation advice
 | 26 | **Owner pre-test observations**: creators' 00:00-patched files DO show full visible HDR in-feed (00:00+HDR works in the wild); TikTok shows no HDR tag — HDR is judged by the visible effect, not a badge ("badge" wording corrected across surfaces). Owner running the Studio-flip / method test next. |- Wants real working software, not specs or mockups
 | 27 | **Method's first measured result**: 60fps preserved ✅ (timescale patch works on our account), slower first render ✅ (HDR pipeline entered — previous posts skipped it), visible HDR ❌ ("a bit brighter, not HDR"). Diagnosis table recorded at §2.9 — one download-back (colour tags + bitrate) discriminates SDR-tonemap vs starved-HDR vs HLG-source. |- Wants all three surfaces at feature parity (website and extension must not lag
-  the CLI)
+| 28 | **00:00 patch is dead on both routes after the TikTok update** (owner screenshot: post screen, `-patched.mp4`, no duration, can't publish). Studio already refused; now the app blocks posting. All surfaces relabel the patch "likely broken — Sept 2026 update"; frame-rate method unaffected (real duration). Matches vague-infinity's "NOVA updated" scramble. |  the CLI)
 - Prefers being shown the command to run over long explanations
 - Will push back hard on anything that doesn't work; take it seriously and test
   rather than explain
