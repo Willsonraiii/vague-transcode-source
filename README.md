@@ -39,7 +39,7 @@ container layout changes, so the file size is identical:
 | Edit lists | `edts` renamed to `free` so readers skip it |
 | Strip Dolby Vision | `dvcC` → `free` *(off by default — see HANDOFF)* |
 | Frame-rate method | `mvhd`+`mdhd` timescale ÷2/÷4 — TikTok's encoder decimates nothing *(the ut0ku/Zilem-style patch — default on for 60/120 fps, works on HDR)* |
-| Duration patch | `mvhd` duration → 1 tick, shows 00:00 *(opt-in · SDR only — refused on HDR input, HANDOFF §2.3b; keep out of iOS Photos — can crash the gallery)* |
+| Duration patch | `mvhd` duration → 1 tick, shows 00:00 *(opt-in · experimental on HDR — §2.3b confound; keep out of iOS Photos — can crash the gallery)* |
 
 **Transcodes** (CLI only) — optional 4K → 1080p downscale (`--1080p`) while
 preserving Dolby Vision, via `dovi_tool` extract → encode → inject → verify.

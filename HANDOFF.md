@@ -112,9 +112,10 @@ Photos may read a different box than WebKit). Our mvhd=1-with-real-tkhd/mdhd
 is milder than all-zero, but not proven safe. **Rule: patched files live in
 the Files app, never in Photos.**
 
-### 2.3b The patch and HDR are mutually exclusive ⭐⭐
+### 2.3b The patch and HDR are mutually exclusive ⭐⭐ — **later CONFOUNDED, block lifted**
 
-**Tested by the owner, and the most precise finding in the project.**
+**Tested by the owner — though the test's upload route (gallery) re-encodes the
+file, so read this together with the dispute note at the end.**
 
 Upload a duration-patched HDR file to TikTok:
 
@@ -126,21 +127,29 @@ So the HDR data survives TikTok's pipeline completely. What fails is
 **playback**: the TikTok player will not switch into HDR mode for a file whose
 movie-header duration reads 00:00. HDR playback needs valid duration metadata.
 
-**Consequences:**
+**Consequences — ⚠ STATUS DISPUTED (27 Sept 2026, owner direction):**
 
 | Content | Duration patch |
 |---|---|
-| HDR | ❌ never — you lose HDR rendering |
+| HDR | ⚠ **experimental** — allowed everywhere, warning shown |
 | SDR | ✅ fine |
 
-All three surfaces refuse the patch on HDR files: the CLI exits unless
-`--force-patch` (or `--sdr` on the **transcode** path, where the output really
-is SDR — a remux copies streams, so `--sdr` rescues nothing there); the website
-disables the checkbox with an explanation; the extension replaces the option
-with a note.
+The refusal that used to be here was built off ONE test (patched HDR → no HDR
+badge in-app). That test was **confounded**: the upload went through the
+gallery (§2.4 — no Files picker existed), and the gallery re-encodes. Meanwhile
+creators' patched HDR files demonstrably deliver full HDR in the feed. Both
+facts can't be explained by "the patch kills HDR" — so the block was lifted:
+site and extension offer the patch on HDR (experimental, confound explained),
+CLI proceeds with a warning (`--force-patch` kept as a compat no-op).
+
+**The clean A/B that settles it** (§8.7): same HDR clip, (a) patch + method,
+(b) method only — post both, compare badges + "Did it survive?". If (a) loses
+HDR but (b) keeps it, §2.3b was real; if both keep it, the gallery route was
+the killer all along.
 
 This also proves the patch genuinely changes TikTok's behaviour — it is not
-placebo. It is simply incompatible with HDR.
+placebo. Whether it is truly incompatible with HDR is what the §8.7 A/B
+settles; the confound means "incompatible" is no longer established.
 
 **Reproduced Sept 2026** with a 4K60 Dolby Vision upload: the post's
 third-party download reads **HDR 4K 60** in the gallery, while the app shows
@@ -551,7 +560,7 @@ Kept so a new assistant doesn't repeat a dead end.
 | 21 | **Owner follow-up on the 4K60 test**: patched file crashed the phone gallery (Photos force-closes; patched files now live in Files, never Photos — §2.3). Creators' HDR posts badge + render slower in-app; ours played instantly with no badge → HDR pipeline was skipped; downloaded-post HDR tags = tag survival, not playback. §2.6 downgraded from "delivers 4K60 HDR" to "delivers 4K60; HDR tags ≠ HDR playback". |---
 | 22 | **Downloader echo discovered**: post downloads are mixed — some show 00:00 and won't play (our own patched upload, stored & served by TikTok), some play normally. "HDR 4K 60" tag readings on downloads are unreliable until the download plays with a normal duration. Compare tool now warns about this. Owner agreed to the decisive unpatched-HDR test (§8.1). |
 | 23 | **Found and implemented the actual paid method**: ut0ku/120fps-method (open source) — divide mvhd+mdhd timescale+duration by 2/4 so TikTok's encoder reads half the fps and decimates nothing. Lossless, real duration kept, HDR-safe. Default-on for >48fps on all surfaces (`--method`/`#method`/`#vg-method`); 13-check unit suite + browser e2e. Owner context: creators' uploads showed 00:00 (paid tools combine BOTH patches); their delivered posts still crash the gallery. |## 9. Standing preferences
-
+| 24 | **Owner: HDR is the main target — others patch HDR, we refused it.** §2.3b block LIFTED on all surfaces (patch on HDR = experimental + confound note: the failed test went through the gallery, which re-encodes; creators' patched HDR delivers). CLI `--patch --method` on HDR now builds the full paid-method file (1-tick + timescale ÷2 + DV kept, byte-identical). Clean A/B recorded at §8.7. |
 - Personal use — no monetisation advice
 - Wants real working software, not specs or mockups
 - Wants all three surfaces at feature parity (website and extension must not lag
